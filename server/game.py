@@ -1,3 +1,8 @@
+import sys
+
+sys.path.append('multiagent')
+
+
 from abc import ABC, abstractmethod
 from threading import Lock, Thread
 from queue import Queue, LifoQueue, Empty, Full
@@ -9,6 +14,10 @@ from overcooked_ai_py.planning.planners import MotionPlanner, NO_COUNTERS_PARAMS
 from human_aware_rl.rllib.rllib import load_agent
 import random, os, pickle, json
 import ray
+
+from tianshou.env.overcooked.mdp import OvercookedMDP
+
+from policy_interface import load_policy, use_policy, reset_policy
 
 # Relative path to where all static pre-trained agents are stored on server
 AGENT_DIR = None
@@ -451,9 +460,12 @@ class OvercookedGame(Game):
     def npc_policy_consumer(self, policy_id):
         queue = self.npc_state_queues[policy_id]
         policy = self.npc_policies[policy_id]
+        print("List: " )
         while self._is_active:
             state = queue.get()
-            npc_action, _ = policy.action(state)
+            print("PolicyID: ", policy_id)
+            # npc_action, _ = policy.action(state)
+            npc_action = use_policy(self, state, policy)
             super(OvercookedGame, self).enqueue_action(policy_id, npc_action)
 
 
@@ -494,6 +506,7 @@ class OvercookedGame(Game):
         # Apply overcooked game logic to get state transition
         prev_state = self.state
         self.state, info = self.mdp.get_state_transition(prev_state, joint_action)
+        # import pdb; pdb.set_trace()
         if self.show_potential:
             self.phi = self.mdp.potential_function(prev_state, self.mp, gamma=0.99)
 
@@ -503,7 +516,10 @@ class OvercookedGame(Game):
                 self.npc_state_queues[npc_id].put(self.state, block=False)
 
         # Update score based on soup deliveries that might have occured
-        curr_reward = sum(info['sparse_reward_by_agent'])
+        # curr_reward = sum(info['sparse_reward_by_agent'])
+        # TODO !!!!!!!!!!!!!!!!!!!!! FIX LATER
+        curr_reward = 0
+
         self.score += curr_reward
 
         # Return about the current transition
@@ -533,7 +549,8 @@ class OvercookedGame(Game):
             raise ValueError("Inconsistent State")
 
         self.curr_layout = self.layouts.pop()
-        self.mdp = OvercookedGridworld.from_layout_name(self.curr_layout, **self.mdp_params)
+        # self.mdp = OvercookedGridworld.from_layout_name(self.curr_layout, **self.mdp_params)
+        self.mdp = OvercookedMDP.from_layout_name(self.curr_layout, **self.mdp_params)
         if self.show_potential:
             self.mp = MotionPlanner.from_pickle_or_compute(self.mdp, counter_goals=NO_COUNTERS_PARAMS)
         self.state = self.mdp.get_standard_start_state()
@@ -544,7 +561,8 @@ class OvercookedGame(Game):
         self.score = 0
         self.threads = []
         for npc_policy in self.npc_policies:
-            self.npc_policies[npc_policy].reset()
+            # self.npc_policies[npc_policy].reset()
+            reset_policy(None)
             self.npc_state_queues[npc_policy].put(self.state)
             t = Thread(target=self.npc_policy_consumer, args=(npc_policy,))
             self.threads.append(t)
@@ -579,25 +597,27 @@ class OvercookedGame(Game):
         return obj_dict
 
     def get_policy(self, npc_id, idx=0):
-        if npc_id.lower().startswith("rllib"):
-            try:
-                # Loading rllib agents requires additional helpers
-                fpath = os.path.join(AGENT_DIR, npc_id, 'agent', 'agent')
-                agent =  load_agent(fpath, agent_index=idx)
-                return agent
-            except Exception as e:
-                raise IOError("Error loading Rllib Agent\n{}".format(e.__repr__()))
-            finally:
-                # Always kill ray after loading agent, otherwise, ray will crash once process exits
-                if ray.is_initialized():
-                    ray.shutdown()
-        else:
-            try:
-                fpath = os.path.join(AGENT_DIR, npc_id, 'agent.pickle')
-                with open(fpath, 'rb') as f:
-                    return pickle.load(f)
-            except Exception as e:
-                raise IOError("Error loading agent\n{}".format(e.__repr__()))
+        # if npc_id.lower().startswith("rllib"):
+        #     try:
+        #         # Loading rllib agents requires additional helpers
+        #         fpath = os.path.join(AGENT_DIR, npc_id, 'agent', 'agent')
+        #         agent =  load_agent(fpath, agent_index=idx)
+        #         return agent
+        #     except Exception as e:
+        #         raise IOError("Error loading Rllib Agent\n{}".format(e.__repr__()))
+        #     finally:
+        #         # Always kill ray after loading agent, otherwise, ray will crash once process exits
+        #         if ray.is_initialized():
+        #             ray.shutdown()
+        # else:
+        #     try:
+        #         fpath = os.path.join(AGENT_DIR, npc_id, 'agent.pickle')
+        #         with open(fpath, 'rb') as f:
+        #             return pickle.load(f)
+        #     except Exception as e:
+        #         raise IOError("Error loading agent\n{}".format(e.__repr__()))
+
+        return load_policy(idx)
 
 
 class OvercookedPsiturk(OvercookedGame):

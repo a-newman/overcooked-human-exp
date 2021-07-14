@@ -79,6 +79,7 @@ socket.on('waiting', function(data) {
 socket.on('creation_failed', function(data) {
     // Tell user what went wrong
     let err = data['error']
+    console.log(data)
     $("#overcooked").empty();
     $('#lobby').hide();
     $("#instructions").show();

@@ -1,4 +1,5 @@
 import os
+import traceback
 
 # Import and patch the production eventlet server if necessary
 if os.getenv('FLASK_ENV', 'production') == 'production':
@@ -138,6 +139,8 @@ def try_create_game(game_name ,**kwargs):
         err = RuntimeError("Server at max capacity")
         return None, err
     except Exception as e:
+        traceback_output = traceback.format_exc()
+        print(traceback_output)
         return None, e
     else:
         GAMES[game.id] = game
@@ -354,7 +357,7 @@ def instructions():
 def tutorial():
     psiturk = request.args.get('psiturk', False)
     return render_template('tutorial.html', config=TUTORIAL_CONFIG, psiturk=psiturk)
-
+    
 @app.route('/debug')
 def debug():
     resp = {}

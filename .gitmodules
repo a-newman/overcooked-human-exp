@@ -1,0 +1,4 @@
+[submodule "server/multiagent"]
+	path = server/multiagent
+	url = https://github.com/StanfordVL/multiagent.git
+	branch = human_collaboration
