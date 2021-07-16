@@ -2,19 +2,25 @@ import os
 import traceback
 
 # Import and patch the production eventlet server if necessary
+
 if os.getenv('FLASK_ENV', 'production') == 'production':
     import eventlet
     eventlet.monkey_patch()
 
+import atexit
+import json
+import logging
 # All other imports must come after patch to ensure eventlet compatibility
-import pickle, queue, atexit, json, logging
+import pickle
+import queue
 from threading import Lock
-from utils import ThreadSafeSet, ThreadSafeDict
-from flask import Flask, render_template, jsonify, request
-from flask_socketio import SocketIO, join_room, leave_room, emit
-from game import OvercookedGame, OvercookedTutorial, Game, OvercookedPsiturk
-import game
 
+from flask import Flask, jsonify, render_template, request
+from flask_socketio import SocketIO, emit, join_room, leave_room
+
+import game
+from game import Game, OvercookedGame, OvercookedPsiturk, OvercookedTutorial
+from utils import ThreadSafeDict, ThreadSafeSet
 
 ### Thoughts -- where I'll log potential issues/ideas as they come up
 # Should make game driver code more error robust -- if overcooked randomlly errors we should catch it and report it to user
@@ -65,6 +71,7 @@ FREE_IDS = queue.Queue(maxsize=MAX_GAMES)
 FREE_MAP = ThreadSafeDict()
 
 # Initialize our ID tracking data
+
 for i in range(MAX_GAMES):
     FREE_IDS.put(i)
     FREE_MAP[i] = True
@@ -87,16 +94,12 @@ USER_ROOMS = ThreadSafeDict()
 
 # Mapping of string game names to corresponding classes
 GAME_NAME_TO_CLS = {
-    "overcooked" : OvercookedGame,
-    "tutorial" : OvercookedTutorial,
-    "psiturk" : OvercookedPsiturk
+    "overcooked": OvercookedGame,
+    "tutorial": OvercookedTutorial,
+    "psiturk": OvercookedPsiturk
 }
 
 game._configure(MAX_GAME_LENGTH, AGENT_DIR)
-
-
-
-
 
 #######################
 # Flask Configuration #
@@ -107,23 +110,22 @@ app = Flask(__name__, template_folder=os.path.join('static', 'templates'))
 app.config['DEBUG'] = os.getenv('FLASK_ENV', 'production') == 'development'
 socketio = SocketIO(app, cors_allowed_origins="*", logger=app.config['DEBUG'])
 
-
 # Attach handler for logging errors to file
 handler = logging.FileHandler(LOGFILE)
-handler.setLevel(logging.ERROR)  
-app.logger.addHandler(handler)  
-
+handler.setLevel(logging.ERROR)
+app.logger.addHandler(handler)
 
 #################################
 # Global Coordination Functions #
 #################################
 
-def try_create_game(game_name ,**kwargs):
+
+def try_create_game(game_name, **kwargs):
     """
     Tries to create a brand new Game object based on parameters in `kwargs`
-    
+
     Returns (Game, Error) that represent a pointer to a game object, and error that occured
-    during creation, if any. In case of error, `Game` returned in None. In case of sucess, 
+    during creation, if any. In case of error, `Game` returned in None. In case of sucess,
     `Error` returned is None
 
     Possible Errors:
@@ -137,21 +139,26 @@ def try_create_game(game_name ,**kwargs):
         game = game_cls(id=curr_id, **kwargs)
     except queue.Empty:
         err = RuntimeError("Server at max capacity")
+
         return None, err
     except Exception as e:
         traceback_output = traceback.format_exc()
         print(traceback_output)
+
         return None, e
     else:
         GAMES[game.id] = game
         FREE_MAP[game.id] = False
+
         return game, None
+
 
 def cleanup_game(game):
     if FREE_MAP[game.id]:
         raise ValueError("Double free on a game")
 
     # User tracking
+
     for user_id in game.players:
         leave_curr_room(user_id)
 
@@ -166,20 +173,26 @@ def cleanup_game(game):
     if game.id in ACTIVE_GAMES:
         ACTIVE_GAMES.remove(game.id)
 
+
 def get_game(game_id):
     return GAMES.get(game_id, None)
+
 
 def get_curr_game(user_id):
     return get_game(get_curr_room(user_id))
 
+
 def get_curr_room(user_id):
     return USER_ROOMS.get(user_id, None)
+
 
 def set_curr_room(user_id, room_id):
     USER_ROOMS[user_id] = room_id
 
+
 def leave_curr_room(user_id):
     del USER_ROOMS[user_id]
+
 
 def get_waiting_game():
     """
@@ -190,6 +203,7 @@ def get_waiting_game():
     """
     try:
         waiting_id = WAITING_GAMES.get(block=False)
+
         while FREE_MAP[waiting_id]:
             waiting_id = WAITING_GAMES.get(block=False)
     except queue.Empty:
@@ -198,16 +212,15 @@ def get_waiting_game():
         return get_game(waiting_id)
 
 
-
-
 ##########################
 # Socket Handler Helpers #
 ##########################
 
-def  _leave_game(user_id):
+
+def _leave_game(user_id):
     """
-    Removes `user_id` from it's current game, if it exists. Rebroadcast updated game state to all 
-    other users in the relevant game. 
+    Removes `user_id` from it's current game, if it exists. Rebroadcast updated game state to all
+    other users in the relevant game.
 
     Leaving an active game force-ends the game for all other users, if they exist
 
@@ -219,8 +232,9 @@ def  _leave_game(user_id):
 
     if not game:
         # Cannot leave a game if not currently in one
+
         return False
-    
+
     # Acquire this game's lock to ensure all global state updates are atomic
     with game.lock:
         # Update socket state maintained by socketio
@@ -230,15 +244,17 @@ def  _leave_game(user_id):
         leave_curr_room(user_id)
 
         # Update game state maintained by game object
+
         if user_id in game.players:
             game.remove_player(user_id)
         else:
             game.remove_spectator(user_id)
-        
+
         # Whether the game was active before the user left
         was_active = game.id in ACTIVE_GAMES
 
         # Rebroadcast data and handle cleanup based on the transition caused by leaving
+
         if was_active and game.is_empty():
             # Active -> Empty
             game.deactivate()
@@ -247,22 +263,23 @@ def  _leave_game(user_id):
             cleanup_game(game)
         elif not was_active:
             # Waiting -> Waiting
-            emit('waiting', { "in_game" : True }, room=game.id)
+            emit('waiting', {"in_game": True}, room=game.id)
         elif was_active and game.is_ready():
             # Active -> Active
             pass
         elif was_active and not game.is_empty():
             # Active -> Waiting
             game.deactivate()
-            
-            
 
     return was_active
 
+
 def _create_game(user_id, game_name, params={}):
     game, err = try_create_game(game_name, **params)
+
     if not game:
-        emit("creation_failed", { "error" : err.__repr__() })
+        emit("creation_failed", {"error": err.__repr__()})
+
         return
     spectating = True
     with game.lock:
@@ -274,20 +291,25 @@ def _create_game(user_id, game_name, params={}):
             game.add_spectator(user_id)
         join_room(game.id)
         set_curr_room(user_id, game.id)
+
         if game.is_ready():
             game.activate()
             ACTIVE_GAMES.add(game.id)
-            emit('start_game', { "spectating" : spectating, "start_info" : game.to_json()}, room=game.id)
+            emit('start_game', {
+                "spectating": spectating,
+                "start_info": game.to_json()
+            },
+                 room=game.id)
             socketio.start_background_task(play_game, game, fps=MAX_FPS)
         else:
             WAITING_GAMES.put(game.id)
-            emit('waiting', { "in_game" : True }, room=game.id)
-
+            emit('waiting', {"in_game": True}, room=game.id)
 
 
 #####################
 # Debugging Helpers #
 #####################
+
 
 def _ensure_consistent_state():
     """
@@ -295,12 +317,12 @@ def _ensure_consistent_state():
 
     Let ACTIVE be the set of all active game IDs, GAMES be the set of all existing
     game IDs, and WAITING be the set of all waiting (non-stale) game IDs. Note that
-    a game could be in the WAITING_GAMES queue but no longer exist (indicated by 
+    a game could be in the WAITING_GAMES queue but no longer exist (indicated by
     the FREE_MAP)
 
     - Intersection of WAITING and ACTIVE games must be empty set
     - Union of WAITING and ACTIVE must be equal to GAMES
-    - id \in FREE_IDS => FREE_MAP[id] 
+    - id \in FREE_IDS => FREE_MAP[id]
     - id \in ACTIVE_GAMES => Game in active state
     - id \in WAITING_GAMES => Game in inactive state
     """
@@ -318,46 +340,68 @@ def _ensure_consistent_state():
     for game_id in ACTIVE_GAMES:
         active_games.add(game_id)
 
-    assert waiting_games.union(active_games) == all_games, "WAITING union ACTIVE != ALL"
+    assert waiting_games.union(
+        active_games) == all_games, "WAITING union ACTIVE != ALL"
 
-    assert not waiting_games.intersection(active_games), "WAITING intersect ACTIVE != EMPTY"
+    assert not waiting_games.intersection(
+        active_games), "WAITING intersect ACTIVE != EMPTY"
 
-    assert all([get_game(g_id)._is_active for g_id in active_games]), "Active ID in waiting state"
-    assert all([not get_game(g_id)._id_active for g_id in waiting_games]), "Waiting ID in active state"
+    assert all([get_game(g_id)._is_active
+                for g_id in active_games]), "Active ID in waiting state"
+    assert all([not get_game(g_id)._id_active
+                for g_id in waiting_games]), "Waiting ID in active state"
 
 
 def get_agent_names():
-    return [d for d in os.listdir(AGENT_DIR) if os.path.isdir(os.path.join(AGENT_DIR, d))]
+    return [
+        d for d in os.listdir(AGENT_DIR)
+        if os.path.isdir(os.path.join(AGENT_DIR, d))
+    ]
 
 
 ######################
 # Application routes #
 ######################
 
-# Hitting each of these endpoints creates a brand new socket that is closed 
+# Hitting each of these endpoints creates a brand new socket that is closed
 # at after the server response is received. Standard HTTP protocol
+
 
 @app.route('/')
 def index():
     agent_names = get_agent_names()
-    return render_template('index.html', agent_names=agent_names, layouts=LAYOUTS)
+
+    return render_template('index.html',
+                           agent_names=agent_names,
+                           layouts=LAYOUTS)
+
 
 @app.route('/psiturk')
 def psiturk():
     uid = request.args.get("UID")
     psiturk_config = request.args.get('config', PSITURK_CONFIG)
+
     return render_template('psiturk.html', uid=uid, config=psiturk_config)
+
 
 @app.route('/instructions')
 def instructions():
     psiturk = request.args.get('psiturk', False)
-    return render_template('instructions.html', layout_conf=LAYOUT_GLOBALS, psiturk=psiturk)
+
+    return render_template('instructions.html',
+                           layout_conf=LAYOUT_GLOBALS,
+                           psiturk=psiturk)
+
 
 @app.route('/tutorial')
 def tutorial():
     psiturk = request.args.get('psiturk', False)
-    return render_template('tutorial.html', config=TUTORIAL_CONFIG, psiturk=psiturk)
-    
+
+    return render_template('tutorial.html',
+                           config=TUTORIAL_CONFIG,
+                           psiturk=psiturk)
+
+
 @app.route('/debug')
 def debug():
     resp = {}
@@ -367,20 +411,21 @@ def debug():
     users = []
     free_ids = []
     free_map = {}
+
     for game_id in ACTIVE_GAMES:
         game = get_game(game_id)
-        active_games.append({"id" : game_id, "state" : game.to_json()})
+        active_games.append({"id": game_id, "state": game.to_json()})
 
     for game_id in list(WAITING_GAMES.queue):
         game = get_game(game_id)
         game_state = None if FREE_MAP[game_id] else game.to_json()
-        waiting_games.append({ "id" : game_id, "state" : game_state})
+        waiting_games.append({"id": game_id, "state": game_state})
 
     for game_id in GAMES:
         games.append(game_id)
 
     for user_id in USER_ROOMS:
-        users.append({ user_id : get_curr_room(user_id) })
+        users.append({user_id: get_curr_room(user_id)})
 
     for game_id in list(FREE_IDS.queue):
         free_ids.append(game_id)
@@ -388,13 +433,13 @@ def debug():
     for game_id in FREE_MAP:
         free_map[game_id] = FREE_MAP[game_id]
 
-    
     resp['active_games'] = active_games
     resp['waiting_games'] = waiting_games
     resp['all_games'] = games
     resp['users'] = users
     resp['free_ids'] = free_ids
     resp['free_map'] = free_map
+
     return jsonify(resp)
 
 
@@ -402,10 +447,11 @@ def debug():
 # Socket Event Handlers #
 #########################
 
-# Asynchronous handling of client-side socket events. Note that the socket persists even after the 
-# event has been handled. This allows for more rapid data communication, as a handshake only has to 
+# Asynchronous handling of client-side socket events. Note that the socket persists even after the
+# event has been handled. This allows for more rapid data communication, as a handshake only has to
 # happen once at the beginning. Thus, socket events are used for all game updates, where more rapid
 # communication is needed
+
 
 @socketio.on('create')
 def on_create(data):
@@ -414,14 +460,16 @@ def on_create(data):
     with USERS[user_id]:
         # Retrieve current game if one exists
         curr_game = get_curr_game(user_id)
+
         if curr_game:
             # Cannot create if currently in a game
+
             return
-        
+
         params = data.get('params', {})
         game_name = data.get('game_name', 'overcooked')
         _create_game(user_id, game_name, params)
-    
+
 
 @socketio.on('join')
 def on_join(data):
@@ -431,10 +479,12 @@ def on_join(data):
 
         # Retrieve current game if one exists
         curr_game = get_curr_game(user_id)
+
         if curr_game:
             # Cannot join if currently in a game
+
             return
-        
+
         # Retrieve a currently open game if one exists
         game = get_waiting_game()
 
@@ -443,11 +493,12 @@ def on_join(data):
             params = data.get('params', {})
             game_name = data.get('game_name', 'overcooked')
             _create_game(user_id, game_name, params)
+
             return
 
         elif not game:
             # No available game was found so start waiting to join one
-            emit('waiting', { "in_game" : False })
+            emit('waiting', {"in_game": False})
         else:
             # Game was found so join it
             with game.lock:
@@ -455,17 +506,22 @@ def on_join(data):
                 join_room(game.id)
                 set_curr_room(user_id, game.id)
                 game.add_player(user_id)
-                    
+
                 if game.is_ready():
                     # Game is ready to begin play
                     game.activate()
                     ACTIVE_GAMES.add(game.id)
-                    emit('start_game', { "spectating" : False, "start_info" : game.to_json()}, room=game.id)
+                    emit('start_game', {
+                        "spectating": False,
+                        "start_info": game.to_json()
+                    },
+                         room=game.id)
                     socketio.start_background_task(play_game, game)
                 else:
                     # Still need to keep waiting for players
                     WAITING_GAMES.put(game.id)
-                    emit('waiting', { "in_game" : True }, room=game.id)
+                    emit('waiting', {"in_game": True}, room=game.id)
+
 
 @socketio.on('leave')
 def on_leave(data):
@@ -474,9 +530,10 @@ def on_leave(data):
         was_active = _leave_game(user_id)
 
         if was_active:
-            emit('end_game', { "status" : Game.Status.DONE, "data" : {}})
+            emit('end_game', {"status": Game.Status.DONE, "data": {}})
         else:
             emit('end_lobby')
+
 
 @socketio.on('action')
 def on_action(data):
@@ -484,9 +541,10 @@ def on_action(data):
     action = data['action']
 
     game = get_curr_game(user_id)
+
     if not game:
         return
-    
+
     game.enqueue_action(user_id, action)
 
 
@@ -499,10 +557,12 @@ def on_connect():
 
     USERS[user_id] = Lock()
 
+
 @socketio.on('disconnect')
 def on_disconnect():
     # Ensure game data is properly cleaned-up in case of unexpected disconnect
     user_id = request.sid
+
     if user_id not in USERS:
         return
     with USERS[user_id]:
@@ -511,20 +571,22 @@ def on_disconnect():
     del USERS[user_id]
 
 
-
-
 # Exit handler for server
 def on_exit():
     # Force-terminate all games on server termination
+
     for game_id in GAMES:
-        socketio.emit('end_game', { "status" : Game.Status.INACTIVE, "data" : get_game(game_id).get_data() }, room=game_id)
-
-
+        socketio.emit('end_game', {
+            "status": Game.Status.INACTIVE,
+            "data": get_game(game_id).get_data()
+        },
+                      room=game_id)
 
 
 #############
 # Game Loop #
 #############
+
 
 def play_game(game, fps=30):
     """
@@ -536,26 +598,37 @@ def play_game(game, fps=30):
     fps (int):              Number of game ticks that should happen every second
     """
     status = Game.Status.ACTIVE
+
     while status != Game.Status.DONE and status != Game.Status.INACTIVE:
         with game.lock:
             status = game.tick()
+
         if status == Game.Status.RESET:
             with game.lock:
                 data = game.get_data()
-            socketio.emit('reset_game', { "state" : game.to_json(), "timeout" : game.reset_timeout, "data" : data}, room=game.id)
-            socketio.sleep(game.reset_timeout/1000)
+            socketio.emit('reset_game', {
+                "state": game.to_json(),
+                "timeout": game.reset_timeout,
+                "data": data
+            },
+                          room=game.id)
+            socketio.sleep(game.reset_timeout / 1000)
         else:
-            socketio.emit('state_pong', { "state" : game.get_state() }, room=game.id)
-        socketio.sleep(1/fps)
-    
+            socketio.emit('state_pong', {"state": game.get_state()},
+                          room=game.id)
+        socketio.sleep(1 / fps)
+
     with game.lock:
         data = game.get_data()
-        socketio.emit('end_game', { "status" : status, "data" : data }, room=game.id)
+        socketio.emit('end_game', {
+            "status": status,
+            "data": data
+        },
+                      room=game.id)
 
         if status != Game.Status.INACTIVE:
             game.deactivate()
         cleanup_game(game)
-
 
 
 if __name__ == '__main__':
@@ -567,4 +640,13 @@ if __name__ == '__main__':
     atexit.register(on_exit)
 
     # https://localhost:80 is external facing address regardless of build environment
-    socketio.run(app, host=host, port=port, log_output=app.config['DEBUG'])
+    is_debug = app.config['DEBUG']
+
+    if is_debug:
+        print("Running in debug mode...")
+    socketio.run(app,
+                 host=host,
+                 port=port,
+                 log_output=is_debug,
+                 debug=is_debug,
+                 use_reloader=is_debug)
