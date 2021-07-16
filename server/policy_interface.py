@@ -11,9 +11,10 @@ from tianshou.data import Batch, Dict2Obj
 from tianshou.env.overcooked.action import Action
 
 
-def load_policy(idx):
+def load_policy(model_id, player_idx, agent_dir):
 
-    logdir = "static/agents/sac_shaped_simple/best/"
+    # TODO: figure out a cleaner way to select the epoch
+    logdir = os.path.join(agent_dir, model_id, "best")
 
     if not os.path.exists(logdir):
         raise RuntimeError(
@@ -33,11 +34,11 @@ def load_policy(idx):
     policy.load(logdir)
     policy.eval()
 
-    # Multi agent policy, so just grab the first one
-    # TODO: handle this more elegantly
-    policy = policy.policies[0]
+    # Multi agent policy, so just grab the one corresponding to the current index
+    # TODO: is this the behavior we want?
+    policy = policy.policies[player_idx]
 
-    policy.idx = idx
+    policy.idx = player_idx
 
     return policy
 

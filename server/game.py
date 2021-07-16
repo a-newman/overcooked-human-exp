@@ -492,11 +492,9 @@ class OvercookedGame(Game):
     def npc_policy_consumer(self, policy_id):
         queue = self.npc_state_queues[policy_id]
         policy = self.npc_policies[policy_id]
-        print("List: ")
 
         while self._is_active:
             state = queue.get()
-            print("PolicyID: ", policy_id)
             # npc_action, _ = policy.action(state)
             npc_action = use_policy(self, state, policy)
             super(OvercookedGame, self).enqueue_action(policy_id, npc_action)
@@ -655,7 +653,7 @@ class OvercookedGame(Game):
 
     def get_policy(self, npc_id, idx=0):
 
-        return load_policy(idx)
+        return load_policy(npc_id, idx, AGENT_DIR)
 
 
 class OvercookedPsiturk(OvercookedGame):
