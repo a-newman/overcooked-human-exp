@@ -13,7 +13,7 @@ from tianshou.env.overcooked.action import Action
 
 def load_policy(idx):
 
-    logdir = "multiagent/sac_shaped_simple/best"
+    logdir = "static/agents/sac_shaped_simple/best/"
 
     if not os.path.exists(logdir):
         raise RuntimeError(
