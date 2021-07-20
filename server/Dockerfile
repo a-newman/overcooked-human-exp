@@ -1,9 +1,8 @@
 FROM python:3.7-stretch
 
 ARG BUILD_ENV
-ARG OVERCOOKED_BRANCH
-ARG HARL_BRANCH
 ARG GRAPHICS
+ARG CERTPATH
 
 WORKDIR /app
 
@@ -44,6 +43,7 @@ COPY ./config.json ./config.json
 ENV HOST 0.0.0.0
 ENV PORT 5000
 ENV CONF_PATH config.json
+ENV CERTPATH $CERTPATH
 
 # Do the thing
 EXPOSE 5000

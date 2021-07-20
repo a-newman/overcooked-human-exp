@@ -355,6 +355,7 @@ def _ensure_consistent_state():
 def get_agent_names():
     return [
         d for d in os.listdir(AGENT_DIR)
+
         if os.path.isdir(os.path.join(AGENT_DIR, d))
     ]
 
@@ -635,18 +636,31 @@ if __name__ == '__main__':
     # Dynamically parse host and port from environment variables (set by docker build)
     host = os.getenv('HOST', '0.0.0.0')
     port = int(os.getenv('PORT', 80))
+    certpath = os.getenv('CERTPATH', '')
 
     # Attach exit handler to ensure graceful shutdown
     atexit.register(on_exit)
 
-    # https://localhost:80 is external facing address regardless of build environment
     is_debug = app.config['DEBUG']
 
     if is_debug:
         print("Running in debug mode...")
-    socketio.run(app,
-                 host=host,
-                 port=port,
-                 log_output=is_debug,
-                 debug=is_debug,
-                 use_reloader=is_debug)
+
+    if certpath:
+        certfile = os.path.join(certpath, "fullchain.pem")
+        keyfile = os.path.join(certpath, "privkey.pem")
+        socketio.run(app,
+                     host=host,
+                     port=port,
+                     log_output=is_debug,
+                     debug=is_debug,
+                     use_reloader=is_debug,
+                     keyfile=keyfile,
+                     certfile=certfile)
+    else:
+        socketio.run(app,
+                     host=host,
+                     port=port,
+                     log_output=is_debug,
+                     debug=is_debug,
+                     use_reloader=is_debug)
