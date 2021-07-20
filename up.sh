@@ -1,4 +1,4 @@
-if [[ $1 = prod* ]];
+if [ $1 = production ];
 then
     echo "production"
     export BUILD_ENV=production
