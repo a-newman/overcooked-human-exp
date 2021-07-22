@@ -14,3 +14,4 @@ services:
             - "443:5000"
         volumes:
             - /etc/letsencrypt:/etc/letsencrypt
+            - ./server/data:/app/data
