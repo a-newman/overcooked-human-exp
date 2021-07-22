@@ -13,6 +13,7 @@ from tianshou.env.overcooked.action import Action, Direction
 from tianshou.env.overcooked.mdp import OvercookedMDP
 
 from policy_interface import load_policy, reset_policy, use_policy
+from save_data import get_data_saver
 
 # Relative path to where all static pre-trained agents are stored on server
 AGENT_DIR = None
@@ -668,12 +669,13 @@ class OvercookedRecorder(OvercookedGame):
         get_data: Returns the accumulated trajectory data and clears the self.trajectory instance variable
 
     """
-    def __init__(self, *args, **kwargs):
+    def __init__(self, config, *args, **kwargs):
         super(OvercookedRecorder, self).__init__(*args,
                                                  showPotential=False,
                                                  **kwargs)
         self.trial_id = None
         self.trajectory = []
+        self.data_saver = get_data_saver(config['data_storage'])
 
     def activate(self):
         """
@@ -695,14 +697,14 @@ class OvercookedRecorder(OvercookedGame):
         # curr_reward = sum(info['sparse_reward_by_agent'])
         curr_reward = 0
         transition = {
-            "state": json.dumps(prev_state.to_dict()),
-            "joint_action": json.dumps(joint_action),
+            "state": prev_state.to_dict(),
+            "joint_action": joint_action,
             "reward": curr_reward,
             "time_left": max(self.max_time - (time() - self.start_time), 0),
             "score": self.score,
             "time_elapsed": time() - self.start_time,
             "cur_gameloop": self.curr_tick,
-            "layout": json.dumps(self.mdp.terrain_mtx),
+            "layout": self.mdp.terrain_mtx,
             "layout_name": self.curr_layout,
             "trial_id": self.trial_id,
             "player_0_id": self.players[0],
@@ -719,6 +721,8 @@ class OvercookedRecorder(OvercookedGame):
         """
         data = {"trial_id": self.trial_id, "trajectory": self.trajectory}
         self.trajectory = []
+
+        self.data_saver.save(self.trial_id, data)
 
         return data
 

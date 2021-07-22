@@ -275,7 +275,7 @@ def _leave_game(user_id):
 
 
 def _create_game(user_id, game_name, params={}):
-    game, err = try_create_game(game_name, **params)
+    game, err = try_create_game(game_name, config=CONFIG, **params)
 
     if not game:
         emit("creation_failed", {"error": err.__repr__()})

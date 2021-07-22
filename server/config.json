@@ -11,6 +11,10 @@
     "MAX_GAME_LENGTH": 120,
     "AGENT_DIR": "./static/agents",
     "MAX_FPS": 30,
+    "data_storage": {
+        "storage_method": "save_to_file",
+        "save_directory": "./data"
+    },
     "psiturk": {
         "experimentParams": {
             "layouts": [
