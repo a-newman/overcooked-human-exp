@@ -1,7 +1,7 @@
 // Persistent network connection that will be used to transmit real-time data
 var socket = io();
 
-/* * * * * * * * * * * * * * * * 
+/* * * * * * * * * * * * * * * *
  * Button click event handlers *
  * * * * * * * * * * * * * * * */
 
@@ -11,7 +11,7 @@ $(function() {
         params.layouts = [params.layout]
         data = {
             "params" : params,
-            "game_name" : "overcooked",
+            "game_name" : "overcooked_recorder",
             "create_if_not_found" : false
         };
         socket.emit("create", data);
@@ -44,7 +44,7 @@ $(function() {
 
 
 
-/* * * * * * * * * * * * * 
+/* * * * * * * * * * * * *
  * Socket event handlers *
  * * * * * * * * * * * * */
 
@@ -79,7 +79,6 @@ socket.on('waiting', function(data) {
 socket.on('creation_failed', function(data) {
     // Tell user what went wrong
     let err = data['error']
-    console.log(data)
     $("#overcooked").empty();
     $('#lobby').hide();
     $("#instructions").show();
@@ -117,11 +116,11 @@ socket.on('start_game', function(data) {
     $('#leave').show();
     $('#leave').attr("disabled", false)
     $('#game-title').show();
-    
+
     if (!window.spectating) {
         enable_key_listener();
     }
-    
+
     graphics_start(graphics_config);
 });
 
@@ -130,7 +129,7 @@ socket.on('reset_game', function(data) {
     if (!window.spectating) {
         disable_key_listener();
     }
-    
+
     $("#overcooked").empty();
     $("#reset-game").show();
     setTimeout(function() {
@@ -167,7 +166,7 @@ socket.on('end_game', function(data) {
     $('#tutorial').show();
     $("#leave").hide();
     $('#leave').attr("disabled", true)
-    
+
     // Game ended unexpectedly
     if (data.status === 'inactive') {
         $('#error-exit').show();
@@ -192,7 +191,7 @@ socket.on('end_lobby', function() {
 })
 
 
-/* * * * * * * * * * * * * * 
+/* * * * * * * * * * * * * *
  * Game Key Event Listener *
  * * * * * * * * * * * * * */
 
@@ -221,7 +220,7 @@ function enable_key_listener() {
                 break;
 
             default: // exit this handler for other keys
-                return; 
+                return;
         }
         e.preventDefault();
         socket.emit('action', { 'action' : action });

@@ -656,45 +656,44 @@ class OvercookedGame(Game):
         return load_policy(npc_id, idx, AGENT_DIR)
 
 
-class OvercookedPsiturk(OvercookedGame):
+class OvercookedRecorder(OvercookedGame):
     """
-    Wrapper on OvercookedGame that handles additional housekeeping for Psiturk experiments
+    Wrapper on OvercookedGame that handles recording and storing data
 
     Instance Variables:
         - trajectory (list(dict)): list of state-action pairs in current trajectory
-        - psiturk_uid (string): Unique id for each psiturk game instance (provided by Psiturk backend)
-            Note, this is not the user id -- two users in the same game will have the same psiturk_uid
-        - trial_id (string): Unique identifier for each psiturk trial, updated on each call to reset
-            Note, one OvercookedPsiturk game handles multiple layouts. This is how we differentiate
+        - trial_id (string): Unique identifier for each game
 
     Methods:
         get_data: Returns the accumulated trajectory data and clears the self.trajectory instance variable
 
     """
-    def __init__(self, *args, psiturk_uid='-1', **kwargs):
-        super(OvercookedPsiturk, self).__init__(*args,
-                                                showPotential=False,
-                                                **kwargs)
-        self.psiturk_uid = psiturk_uid
+    def __init__(self, *args, **kwargs):
+        super(OvercookedRecorder, self).__init__(*args,
+                                                 showPotential=False,
+                                                 **kwargs)
+        self.trial_id = None
         self.trajectory = []
 
     def activate(self):
         """
         Resets trial ID at start of new "game"
         """
-        super(OvercookedPsiturk, self).activate()
-        self.trial_id = self.psiturk_uid + str(self.start_time)
+        super(OvercookedRecorder, self).activate()
+        self.trial_id = str(self.start_time)
 
     def apply_actions(self):
         """
         Applies pending actions then logs transition data
         """
         # Apply MDP logic
-        prev_state, joint_action, info = super(OvercookedPsiturk,
+        prev_state, joint_action, info = super(OvercookedRecorder,
                                                self).apply_actions()
 
         # Log data to send to psiturk client
-        curr_reward = sum(info['sparse_reward_by_agent'])
+        # TODO: add reward!!!
+        # curr_reward = sum(info['sparse_reward_by_agent'])
+        curr_reward = 0
         transition = {
             "state": json.dumps(prev_state.to_dict()),
             "joint_action": json.dumps(joint_action),
@@ -718,10 +717,7 @@ class OvercookedPsiturk(OvercookedGame):
         """
         Returns and then clears the accumulated trajectory
         """
-        data = {
-            "uid": self.psiturk_uid + "_" + str(time()),
-            "trajectory": self.trajectory
-        }
+        data = {"trial_id": self.trial_id, "trajectory": self.trajectory}
         self.trajectory = []
 
         return data

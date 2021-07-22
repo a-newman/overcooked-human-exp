@@ -19,7 +19,7 @@ from flask import Flask, jsonify, render_template, request
 from flask_socketio import SocketIO, emit, join_room, leave_room
 
 import game
-from game import Game, OvercookedGame, OvercookedPsiturk, OvercookedTutorial
+from game import Game, OvercookedGame, OvercookedRecorder, OvercookedTutorial
 from utils import ThreadSafeDict, ThreadSafeSet
 
 ### Thoughts -- where I'll log potential issues/ideas as they come up
@@ -96,7 +96,7 @@ USER_ROOMS = ThreadSafeDict()
 GAME_NAME_TO_CLS = {
     "overcooked": OvercookedGame,
     "tutorial": OvercookedTutorial,
-    "psiturk": OvercookedPsiturk
+    "overcooked_recorder": OvercookedRecorder
 }
 
 game._configure(MAX_GAME_LENGTH, AGENT_DIR)
@@ -355,7 +355,6 @@ def _ensure_consistent_state():
 def get_agent_names():
     return [
         d for d in os.listdir(AGENT_DIR)
-
         if os.path.isdir(os.path.join(AGENT_DIR, d))
     ]
 
