@@ -52,11 +52,15 @@ MAX_GAME_LENGTH = CONFIG['MAX_GAME_LENGTH']
 # Path to where pre-trained agents will be stored on server
 AGENT_DIR = CONFIG['AGENT_DIR']
 
-# Maximum number of games that can run concurrently. Contrained by available memory and CPU
+# Maximum number of games that can run concurrently. Contrained by available
+# memory and CPU
 MAX_GAMES = CONFIG['MAX_GAMES']
 
 # Frames per second cap for serving to client
 MAX_FPS = CONFIG['MAX_FPS']
+
+# Number of game ticks per action emitted by AI
+TICKS_PER_AI_ACTION = CONFIG['TICKS_PER_AI_ACTION']
 
 # Default configuration for psiturk experiment
 PSITURK_CONFIG = json.dumps(CONFIG['psiturk'])
@@ -99,7 +103,7 @@ GAME_NAME_TO_CLS = {
     "overcooked_recorder": OvercookedRecorder
 }
 
-game._configure(MAX_GAME_LENGTH, AGENT_DIR)
+game._configure(MAX_GAME_LENGTH, AGENT_DIR, TICKS_PER_AI_ACTION)
 
 #######################
 # Flask Configuration #
@@ -590,12 +594,14 @@ def on_exit():
 
 def play_game(game, fps=30):
     """
-    Asynchronously apply real-time game updates and broadcast state to all clients currently active
-    in the game. Note that this loop must be initiated by a parallel thread for each active game
+    Asynchronously apply real-time game updates and broadcast state to all
+    clients currently active in the game. Note that this loop must be initiated
+    by a parallel thread for each active game.
 
-    game (Game object):     Stores relevant game state. Note that the game id is the same as to socketio
-                            room id for all clients connected to this game
-    fps (int):              Number of game ticks that should happen every second
+        game (Game object): Stores relevant game state. Note that the game id
+            is the same as to socketio room id for all clients connected to
+            this game
+        fps (int): Number of game ticks that should happen every second
     """
     status = Game.Status.ACTIVE
 

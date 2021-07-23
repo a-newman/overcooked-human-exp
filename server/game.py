@@ -21,11 +21,15 @@ AGENT_DIR = None
 # Maximum allowable game time (in seconds)
 MAX_GAME_TIME = None
 
+# number of ticks per ai action
+TICKS_PER_AI_ACTION = None
 
-def _configure(max_game_time, agent_dir):
-    global AGENT_DIR, MAX_GAME_TIME
+
+def _configure(max_game_time, agent_dir, ticks_per_ai_action):
+    global AGENT_DIR, MAX_GAME_TIME, TICKS_PER_AI_ACTION
     MAX_GAME_TIME = max_game_time
     AGENT_DIR = agent_dir
+    TICKS_PER_AI_ACTION = ticks_per_ai_action
 
 
 class Game(ABC):
@@ -441,7 +445,7 @@ class OvercookedGame(Game):
             "RIGHT": Direction.EAST,
             "SPACE": Action.INTERACT
         }
-        self.ticks_per_ai_action = 4
+        self.ticks_per_ai_action = TICKS_PER_AI_ACTION
         self.curr_tick = 0
         self.human_players = set()
         self.npc_players = set()
@@ -528,11 +532,12 @@ class OvercookedGame(Game):
         pass
 
     def apply_actions(self):
-        # Default joint action, as NPC policies and clients probably don't enqueue actions fast
-        # enough to produce one at every tick
+        # Default joint action, as NPC policies and clients probably don't
+        # enqueue actions fast enough to produce one at every tick
         joint_action = [Action.STAY] * len(self.players)
 
-        # Synchronize individual player actions into a joint-action as required by overcooked logic
+        # Synchronize individual player actions into a joint-action as required
+        # by overcooked logic
 
         for i in range(len(self.players)):
             try:
@@ -757,7 +762,7 @@ class OvercookedTutorial(OvercookedGame):
         self.phase_two_finished = False
         self.max_time = 0
         self.max_players = 2
-        self.ticks_per_ai_action = 8
+        self.ticks_per_ai_action = TICKS_PER_AI_ACTION
         self.curr_phase = 0
 
     @property

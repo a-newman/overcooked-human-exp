@@ -11,6 +11,7 @@
     "MAX_GAME_LENGTH": 120,
     "AGENT_DIR": "./static/agents",
     "MAX_FPS": 30,
+    "TICKS_PER_AI_ACTION": 5,
     "data_storage": {
         "storage_method": "save_to_file",
         "save_directory": "./data"
