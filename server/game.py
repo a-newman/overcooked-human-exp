@@ -13,7 +13,7 @@ from tianshou.env.overcooked.action import Action, Direction
 from tianshou.env.overcooked.mdp import OvercookedMDP
 
 from policy_interface import load_policy, reset_policy, use_policy
-from save_data import get_data_saver
+from save_data import DataSaveError, get_data_saver
 
 # Relative path to where all static pre-trained agents are stored on server
 AGENT_DIR = None
@@ -21,11 +21,19 @@ AGENT_DIR = None
 # Maximum allowable game time (in seconds)
 MAX_GAME_TIME = None
 
+# number of ticks per ai action
+TICKS_PER_AI_ACTION = None
 
-def _configure(max_game_time, agent_dir):
-    global AGENT_DIR, MAX_GAME_TIME
+# reward given per soup
+REWARD_PER_SOUP = 20
+
+
+def _configure(max_game_time, agent_dir, ticks_per_ai_action, reward_per_soup):
+    global AGENT_DIR, MAX_GAME_TIME, TICKS_PER_AI_ACTION, REWARD_PER_SOUP
     MAX_GAME_TIME = max_game_time
     AGENT_DIR = agent_dir
+    TICKS_PER_AI_ACTION = ticks_per_ai_action
+    REWARD_PER_SOUP = reward_per_soup
 
 
 class Game(ABC):
@@ -441,7 +449,8 @@ class OvercookedGame(Game):
             "RIGHT": Direction.EAST,
             "SPACE": Action.INTERACT
         }
-        self.ticks_per_ai_action = 4
+        self.ticks_per_ai_action = TICKS_PER_AI_ACTION
+        self.reward_per_soup = REWARD_PER_SOUP
         self.curr_tick = 0
         self.human_players = set()
         self.npc_players = set()
@@ -528,11 +537,12 @@ class OvercookedGame(Game):
         pass
 
     def apply_actions(self):
-        # Default joint action, as NPC policies and clients probably don't enqueue actions fast
-        # enough to produce one at every tick
+        # Default joint action, as NPC policies and clients probably don't
+        # enqueue actions fast enough to produce one at every tick
         joint_action = [Action.STAY] * len(self.players)
 
-        # Synchronize individual player actions into a joint-action as required by overcooked logic
+        # Synchronize individual player actions into a joint-action as required
+        # by overcooked logic
 
         for i in range(len(self.players)):
             try:
@@ -558,11 +568,10 @@ class OvercookedGame(Game):
                 self.npc_state_queues[npc_id].put(self.state, block=False)
 
         # Update score based on soup deliveries that might have occured
-        # curr_reward = sum(info['sparse_reward_by_agent'])
-        # TODO !!!!!!!!!!!!!!!!!!!!! FIX LATER
-        curr_reward = 0
-
+        curr_reward = self.reward_per_soup * info.get('soups_delivered', 0)
         self.score += curr_reward
+        # Update info with game reward
+        info['curr_game_reward'] = curr_reward
 
         # Return about the current transition
 
@@ -693,9 +702,7 @@ class OvercookedRecorder(OvercookedGame):
                                                self).apply_actions()
 
         # Log data to send to psiturk client
-        # TODO: add reward!!!
-        # curr_reward = sum(info['sparse_reward_by_agent'])
-        curr_reward = 0
+        curr_reward = info['curr_game_reward']
         transition = {
             "state": prev_state.to_dict(),
             "joint_action": joint_action,
@@ -710,7 +717,8 @@ class OvercookedRecorder(OvercookedGame):
             "player_0_id": self.players[0],
             "player_1_id": self.players[1],
             "player_0_is_human": self.players[0] in self.human_players,
-            "player_1_is_human": self.players[1] in self.human_players
+            "player_1_is_human": self.players[1] in self.human_players,
+            "info": info
         }
 
         self.trajectory.append(transition)
@@ -722,7 +730,12 @@ class OvercookedRecorder(OvercookedGame):
         data = {"trial_id": self.trial_id, "trajectory": self.trajectory}
         self.trajectory = []
 
-        self.data_saver.save(self.trial_id, data)
+        try:
+            self.data_saver.save(self.trial_id, data)
+        except DataSaveError as dse:
+            # for now, fail silently
+            print("DataSaveError:", dse)
+            pass
 
         return data
 
@@ -752,7 +765,7 @@ class OvercookedTutorial(OvercookedGame):
         self.phase_two_finished = False
         self.max_time = 0
         self.max_players = 2
-        self.ticks_per_ai_action = 8
+        self.ticks_per_ai_action = TICKS_PER_AI_ACTION
         self.curr_phase = 0
 
     @property
