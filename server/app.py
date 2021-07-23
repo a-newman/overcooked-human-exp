@@ -62,6 +62,9 @@ MAX_FPS = CONFIG['MAX_FPS']
 # Number of game ticks per action emitted by AI
 TICKS_PER_AI_ACTION = CONFIG['TICKS_PER_AI_ACTION']
 
+# Reward (score) to give per soup delivered
+REWARD_PER_SOUP = CONFIG['REWARD_PER_SOUP']
+
 # Default configuration for psiturk experiment
 PSITURK_CONFIG = json.dumps(CONFIG['psiturk'])
 
@@ -103,7 +106,8 @@ GAME_NAME_TO_CLS = {
     "overcooked_recorder": OvercookedRecorder
 }
 
-game._configure(MAX_GAME_LENGTH, AGENT_DIR, TICKS_PER_AI_ACTION)
+game._configure(MAX_GAME_LENGTH, AGENT_DIR, TICKS_PER_AI_ACTION,
+                REWARD_PER_SOUP)
 
 #######################
 # Flask Configuration #
