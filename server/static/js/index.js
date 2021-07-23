@@ -1,9 +1,52 @@
 // Persistent network connection that will be used to transmit real-time data
 var socket = io();
 
+// Global variable to save data from game
+var gameData;
+
+/* * * * * * * * * * * * * * * *
+ *         MTurk Helpers       *
+ * * * * * * * * * * * * * * * */
+var mturkConfig = new Object();
+
+function parseURLQuery() {
+    const params = new URLSearchParams(window.location.search)
+
+    mturkConfig.assignmentId = params.get('assignmentId');
+};
+
+parseURLQuery();
+
 /* * * * * * * * * * * * * * * *
  * Button click event handlers *
  * * * * * * * * * * * * * * * */
+var querystring;
+$(function() {
+    $('#submit').click(function () {
+        const url = "https://workersandbox.mturk.com/mturk/externalSubmit";
+
+        const params = {
+            //MTurk requires original assignmentId
+            assignmentId: mturkConfig.assignmentId,
+            data: gameData,
+        };
+        
+        querystring = Object.keys(params)
+            .map(key => `${key}=${params[key]}`)
+            .join('&');
+
+
+        // const querystring = Object.keys(params)
+        //     .map(key => `${key}=${params[key]}`)
+        //     .join('&');
+
+        // const xhr = new XMLHttpRequest();
+        // xhr.open("POST", url, true);
+
+        // xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        // xhr.send(querystring);
+    });
+});
 
 $(function() {
     $('#create').click(function () {
@@ -116,6 +159,7 @@ socket.on('start_game', function(data) {
     $('#leave').show();
     $('#leave').attr("disabled", false)
     $('#game-title').show();
+    $('#submit').hide();
 
     if (!window.spectating) {
         enable_key_listener();
@@ -166,11 +210,17 @@ socket.on('end_game', function(data) {
     $('#tutorial').show();
     $("#leave").hide();
     $('#leave').attr("disabled", true)
+    $('#submit').show();
+
 
     // Game ended unexpectedly
     if (data.status === 'inactive') {
         $('#error-exit').show();
     }
+
+    //Save the game data globally so that it can be submitted
+    gameData = data
+
 });
 
 socket.on('end_lobby', function() {
