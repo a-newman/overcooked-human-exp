@@ -1,9 +1,119 @@
 // Persistent network connection that will be used to transmit real-time data
 var socket = io();
 
+// Global variable to save data from game
+var gameData;
+
+/* * * * * * * * * * * * * * * *
+ *         MTurk Helpers       *
+ * * * * * * * * * * * * * * * */
+var mturkConfig = new Object();
+
+function parseURLQuery() {
+    const params = new URLSearchParams(window.location.search)
+
+    mturkConfig.assignmentId = params.get('assignmentId');
+};
+
+parseURLQuery();
+
 /* * * * * * * * * * * * * * * *
  * Button click event handlers *
  * * * * * * * * * * * * * * * */
+var querystring;
+
+function addHiddenField(form, name, value) {
+    // form is a jQuery object, name and value are strings
+    var input = $("<input type='hidden' name='" + name + "' value=''>");
+    input.val(value);
+    form.append(input);
+}
+
+function clearMessage() {
+    $("#message-field").html("");
+  }
+
+function generateMessage(cls, header) {
+    clearMessage();
+    if (!header) return;
+    var messageStr = "<div class='ui message " + cls + "'>";
+    messageStr += "<i class='close icon'></i>";
+    messageStr += "<div class='header'>" + header + "</div></div>";
+  
+    var newMessage = $(messageStr);
+    $("#message-field").append(newMessage);
+    newMessage.click(function() {
+      $(this)
+        .closest(".message")
+        .transition("fade");
+    });
+  }
+
+$(function() {
+    $('#submit').click(function () {
+        const submitUrl = "https://workersandbox.mturk.com/mturk/externalSubmit";
+
+        var form = $("#submit-form");
+        addHiddenField(form, "assignmentId", mturkConfig.assignmentId);
+        // addHiddenField(form, "workerId", state.workerId);
+
+        var results = {
+            data: gameData,
+        };
+
+
+        addHiddenField(form, "results", JSON.stringify(results));
+    
+        $("#submit-form").attr("action", submitUrl);
+        $("#submit-form").attr("method", "POST");
+        $("#submit-form").submit();
+
+        $("#submit-button").removeClass("loading");
+        generateMessage("positive", "Thanks! Your task was submitted successfully.");
+        $("#submit-button").addClass("disabled");
+    
+    
+        
+        
+        
+        
+        // const params = {
+        //     //MTurk requires original assignmentId
+        //     assignmentId: mturkConfig.assignmentId,
+        //     data: gameData,
+        // };
+        
+        // querystring = Object.keys(params)
+        //     .map(key => `${key}=${params[key]}`)
+        //     .join('&');
+
+    });
+});
+
+// function mturkSubmit(submitUrl) {
+//     var results = {
+//       inputs: state.taskInputs,
+//       outputs: state.taskOutputs
+//     };
+//     if (!config.advanced.includeDemographicSurvey) {
+//       results["feedback"] = $("#feedback-input").val();
+//     }
+//     console.log("results", results);
+//     addHiddenField(form, "results", JSON.stringify(results));
+//     addHiddenField(form, "feedback", $("#feedback-input").val());
+  
+//     $("#submit-form").attr("action", submitUrl);
+//     $("#submit-form").attr("method", "POST");
+//     $("#submit-form").submit();
+  
+//     $("#submit-button").removeClass("loading");
+//     generateMessage("positive", "Thanks! Your task was submitted successfully.");
+//     $("#submit-button").addClass("disabled");
+
+//             // https://workersandbox.mturk.com/projects/3LHGJL34ATL1RCDWJ3X65ZHOKPF2OL/tasks?ref=w_pl_prvw
+//         // https://workersandbox.mturk.com/projects/3LHGJL34ATL1RCDWJ3X65ZHOKPF2OL/tasks/3OPLMF3EVEWN5D1GAP5NVNUABFPNLE?assignment_id=3RJSC4XJ1A395C3I7YSKR6XGDGL505&auto_accept=true
+
+//   }
 
 $(function() {
     $('#create').click(function () {
@@ -116,6 +226,7 @@ socket.on('start_game', function(data) {
     $('#leave').show();
     $('#leave').attr("disabled", false)
     $('#game-title').show();
+    $('#submit').hide();
 
     if (!window.spectating) {
         enable_key_listener();
@@ -166,11 +277,17 @@ socket.on('end_game', function(data) {
     $('#tutorial').show();
     $("#leave").hide();
     $('#leave').attr("disabled", true)
+    $('#submit').show();
+
 
     // Game ended unexpectedly
     if (data.status === 'inactive') {
         $('#error-exit').show();
     }
+
+    //Save the game data globally so that it can be submitted
+    gameData = data
+
 });
 
 socket.on('end_lobby', function() {

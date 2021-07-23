@@ -376,6 +376,15 @@ def index():
                            layouts=LAYOUTS)
 
 
+@app.route('/mturk')
+def mturk():
+    agent_names = get_agent_names()
+
+    return render_template('index.html',
+                           agent_names=agent_names,
+                           layouts=LAYOUTS)
+
+
 @app.route('/psiturk')
 def psiturk():
     uid = request.args.get("UID")
