@@ -388,7 +388,7 @@ def index():
 def mturk():
     agent_names = get_agent_names()
 
-    return render_template('index.html',
+    return render_template('mturk.html',
                            agent_names=agent_names,
                            layouts=LAYOUTS)
 
