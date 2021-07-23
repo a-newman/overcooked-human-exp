@@ -13,7 +13,7 @@ from tianshou.env.overcooked.action import Action, Direction
 from tianshou.env.overcooked.mdp import OvercookedMDP
 
 from policy_interface import load_policy, reset_policy, use_policy
-from save_data import get_data_saver
+from save_data import DataSaveError, get_data_saver
 
 # Relative path to where all static pre-trained agents are stored on server
 AGENT_DIR = None
@@ -722,7 +722,12 @@ class OvercookedRecorder(OvercookedGame):
         data = {"trial_id": self.trial_id, "trajectory": self.trajectory}
         self.trajectory = []
 
-        self.data_saver.save(self.trial_id, data)
+        try:
+            self.data_saver.save(self.trial_id, data)
+        except DataSaveError as dse:
+            # for now, fail silently
+            print("DataSaveError:", dse)
+            pass
 
         return data
 
