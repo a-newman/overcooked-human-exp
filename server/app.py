@@ -49,6 +49,9 @@ LAYOUT_GLOBALS = CONFIG['layout_globals']
 # Maximum allowable game length (in seconds)
 MAX_GAME_LENGTH = CONFIG['MAX_GAME_LENGTH']
 
+# Default game length
+DEFAULT_GAME_LENGTH = 30
+
 # Path to where pre-trained agents will be stored on server
 AGENT_DIR = CONFIG['AGENT_DIR']
 
@@ -361,10 +364,37 @@ def _ensure_consistent_state():
 
 
 def get_agent_names():
-    return [
+    return ["human"] + sorted([
         d for d in os.listdir(AGENT_DIR)
         if os.path.isdir(os.path.join(AGENT_DIR, d))
-    ]
+    ])
+
+
+def validate_against_list(item, item_list, error_if_absent=False):
+    if item is None:
+        return item_list
+
+    if item in item_list:
+        return [item]
+    else:
+        if error_if_absent:
+            raise RuntimeError(
+                "Could not find item {}: valid options are: {}".format(
+                    item, item_list))
+
+    return item_list
+
+
+def validate_item_numeric(item, max_val=None, default_val=None):
+    try:
+        item = int(item)
+    except (ValueError, TypeError):
+        return default_val, False
+
+    if item > max_val:
+        return default_val, False
+
+    return item, True
 
 
 ######################
@@ -378,10 +408,22 @@ def get_agent_names():
 @app.route('/')
 def index():
     agent_names = get_agent_names()
+    player_one = request.args.get('player_one', None)
+    player_one_list = validate_against_list(player_one, agent_names)
+    player_two = request.args.get('player_two', None)
+    player_two_list = validate_against_list(player_two, agent_names)
+    layout = request.args.get('layout', None)
+    layout_list = validate_against_list(layout, LAYOUTS)
+    game_length = request.args.get('game_length', None)
+    game_length, was_valid = validate_item_numeric(
+        game_length, max_val=MAX_GAME_LENGTH, default_val=DEFAULT_GAME_LENGTH)
 
     return render_template('index.html',
-                           agent_names=agent_names,
-                           layouts=LAYOUTS)
+                           agent_names_player_one=player_one_list,
+                           agent_names_player_two=player_two_list,
+                           layouts=layout_list,
+                           game_length=game_length,
+                           allow_change_game_length=True)
 
 
 @app.route('/mturk')
