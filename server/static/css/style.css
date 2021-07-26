@@ -251,3 +251,12 @@ h1 {
 .noClick {
   pointer-events: None
 }
+
+img.center {
+  display: block;
+  margin: 0 auto;
+}
+
+button {
+  margin: 4px;
+}

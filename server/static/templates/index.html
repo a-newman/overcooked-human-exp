@@ -65,7 +65,6 @@
       </div>
       </div>
     </form>
-    <h4 id="instructions" class="text-center"><a href="./instructions">Instructions</a></h4>
     <!-- <h4 id="tutorial" class="text-center"><a href="./tutorial">Tutorial</a></h4> -->
     <div id="lobby", class="text-center" style="display:none">
         <h4 class="text-center">Game Lobby</h4>
@@ -80,16 +79,17 @@
         <div id="overcooked"></div>
         <div id="error-exit" style="display:none">Game ended unexpectedly (probably due to another user disconnecting)</div>
     </div>
+    {% include "instructions.html" %}
     <div id="control" class="text-center">
-        <button id="create">Start Game</button>
+        <button type="button" class="btn btn-primary" id="create">Start Game</button>
         {% if not mturk %}
-        <button id="join">Join Existing Game</button>
+        <button type="button" class="btn btn-secondary" id="join">Join Existing Game</button>
+        <button class="btn btn-secondary" id="leave" style="display:none;">Leave</button>
         {% endif %}
-        <button id="leave" style="display:none;">Leave</button>
     </div>
     {% if mturk %}
       <div id="control" class="text-center">
-        <button id="submit" style="display:none">Submit</button>
+        <button type="button" class="btn btn-primary" id="submit" style="display:none">Submit</button>
       </div>
     {% endif %}
     <div class="row">
