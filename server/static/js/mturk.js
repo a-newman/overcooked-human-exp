@@ -11,6 +11,12 @@ function addHiddenField(form, name, value) {
     form.append(input);
 }
 
+function onEndGame() {
+  // hide extra buttons
+  $("#instructions").hide();
+  $("#create").hide();
+}
+
 $(function() {
     $('#submit').click(function () {
       const params = new URLSearchParams(window.location.search)

@@ -4,6 +4,9 @@ var socket = io();
 // global variable to save data from game
 var gameData;
 
+// placeholder for a callback that can be added by other scripts
+var onEndGame = false;
+
 /* * * * * * * * * * * * * * * *
  * Button click event handlers *
  * * * * * * * * * * * * * * * */
@@ -173,6 +176,7 @@ socket.on('end_game', function(data) {
 
     // for MTurk: show submit button if present
     $('#submit').show();
+    if (onEndGame) { onEndGame(); }
 
     // Game ended unexpectedly
     if (data.status === 'inactive') {
