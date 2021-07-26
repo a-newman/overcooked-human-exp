@@ -423,7 +423,6 @@ def index():
     # MTurk params
     is_on_mturk = bool(request.args.get('assignmentId', False))
 
-
     return render_template('index.html',
                            agent_names_player_one=player_one_list,
                            agent_names_player_two=player_two_list,

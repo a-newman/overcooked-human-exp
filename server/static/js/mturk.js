@@ -40,8 +40,8 @@ $(function() {
       }
 
       var results = {
-          data: gameData,
-          feedback: feedback,
+        feedback: feedback,
+        data: gameData,
       };
 
       addHiddenField(form, "results", JSON.stringify(results));
