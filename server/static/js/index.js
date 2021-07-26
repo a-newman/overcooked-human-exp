@@ -1,6 +1,9 @@
 // Persistent network connection that will be used to transmit real-time data
 var socket = io();
 
+// global variable to save data from game
+var gameData;
+
 /* * * * * * * * * * * * * * * *
  * Button click event handlers *
  * * * * * * * * * * * * * * * */
@@ -8,6 +11,7 @@ var socket = io();
 $(function() {
     $('#create').click(function () {
         params = arrToJSON($('#game-params-form').serializeArray());
+        console.log("params", params)
         params.layouts = [params.layout]
         data = {
             "params" : params,
@@ -167,10 +171,17 @@ socket.on('end_game', function(data) {
     $("#leave").hide();
     $('#leave').attr("disabled", true)
 
+    // for MTurk: show submit button if present
+    $('#submit').show();
+
     // Game ended unexpectedly
     if (data.status === 'inactive') {
         $('#error-exit').show();
     }
+
+    // Save the game data globally so that it can be referenced
+    // after game end
+    gameData = data
 
 });
 

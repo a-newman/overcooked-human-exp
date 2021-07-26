@@ -391,7 +391,7 @@ def validate_item_numeric(item, max_val=None, default_val=None):
     except (ValueError, TypeError):
         return default_val, False
 
-    if item > max_val:
+    if item > max_val or item < 0:
         return default_val, False
 
     return item, True
@@ -408,6 +408,8 @@ def validate_item_numeric(item, max_val=None, default_val=None):
 @app.route('/')
 def index():
     agent_names = get_agent_names()
+
+    # game setting params
     player_one = request.args.get('playerOne', None)
     player_one_list = validate_against_list(player_one, agent_names)
     player_two = request.args.get('playerTwo', None)
@@ -418,12 +420,17 @@ def index():
     game_length, was_valid = validate_item_numeric(
         game_length, max_val=MAX_GAME_LENGTH, default_val=DEFAULT_GAME_LENGTH)
 
+    # MTurk params
+    is_on_mturk = bool(request.args.get('assignmentId', False))
+    print("is on mturk", is_on_mturk)
+
     return render_template('index.html',
                            agent_names_player_one=player_one_list,
                            agent_names_player_two=player_two_list,
                            layouts=layout_list,
                            game_length=game_length,
-                           allow_change_game_length=not was_valid)
+                           allow_change_game_length=not was_valid,
+                           mturk=is_on_mturk)
 
 
 @app.route('/mturk')
