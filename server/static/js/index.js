@@ -176,6 +176,9 @@ socket.on('end_game', function(data) {
 
     // for MTurk: show submit button if present
     $('#submit').show();
+    $('#feedback').show();
+    $('#feedback-prompt').show();
+
     if (onEndGame) { onEndGame(); }
 
     // Game ended unexpectedly

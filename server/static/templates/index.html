@@ -35,7 +35,7 @@
 	<div class="form-group col-lg-3">
 	  <label for="playerZero" style="color:#1E6A9E">Player 1</label>
 	  <select class="form-control" id="playerZero" name="playerZero">
-        <!-- <option value="human">Hnuman Keyboard Input</option> -->
+        <!-- <option value="human">Human Keyboard Input</option> -->
         {% for agent_name in agent_names_player_one %}
             <option value={{agent_name}}>{{agent_name}}</option>
         {% endfor %}
@@ -88,10 +88,18 @@
         {% endif %}
     </div>
     {% if mturk %}
-      <div id="control" class="text-center">
-        <button type="button" class="btn btn-primary" id="submit" style="display:none">Submit</button>
-      </div>
+
     {% endif %}
+    <div id="control" class="text-center">
+      <h4 id="feedback-prompt" style="display:none">What feedback do you have for us?</h4>
+    </div>
+    <div id="control" class="text-center">
+      <textarea rows="4" cols="50" id="feedback" style="display:none">Enter text here...</textarea>
+    </div>
+    <div id="control" class="text-center">
+      <button type="button" class="btn btn-primary" id="submit" style="display:none">Submit</button>
+    </div>
+
     <div class="row">
       <form id="submit-form" name="submit-form">
       </form>

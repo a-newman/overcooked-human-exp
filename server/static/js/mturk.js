@@ -21,18 +21,21 @@ $(function() {
     $('#submit').click(function () {
       const params = new URLSearchParams(window.location.search)
 
-      const submitUrl = params.get("turkSubmitTo")
-      const assignmentId = params.get("assignmentId")
-      const workerId = params.get("workerId")
       const hitId = params.get("hitId")
+      const workerId = params.get("workerId")
+      const assignmentId = params.get("assignmentId")
+      const submitUrl = params.get("turkSubmitTo")
+
 
       var form = $("#submit-form");
-      addHiddenField(form, "assignmentId", assignmentId);
-      addHiddenField(form, "workerId", workerId);
       addHiddenField(form, "hitId", hitId);
+      addHiddenField(form, "workerId", workerId);
+      addHiddenField(form, "assignmentId", assignmentId);
+
 
       var results = {
           data: gameData,
+          feedback: $("#feedback").val()
       };
 
       addHiddenField(form, "results", JSON.stringify(results));
