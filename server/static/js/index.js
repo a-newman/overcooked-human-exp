@@ -7,7 +7,7 @@ var socket = io();
 
 $(function() {
     $('#create').click(function () {
-        params = arrToJSON($('form').serializeArray());
+        params = arrToJSON($('#game-params-form').serializeArray());
         params.layouts = [params.layout]
         data = {
             "params" : params,
@@ -171,6 +171,7 @@ socket.on('end_game', function(data) {
     if (data.status === 'inactive') {
         $('#error-exit').show();
     }
+
 });
 
 socket.on('end_lobby', function() {

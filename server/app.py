@@ -408,13 +408,13 @@ def validate_item_numeric(item, max_val=None, default_val=None):
 @app.route('/')
 def index():
     agent_names = get_agent_names()
-    player_one = request.args.get('player_one', None)
+    player_one = request.args.get('playerOne', None)
     player_one_list = validate_against_list(player_one, agent_names)
-    player_two = request.args.get('player_two', None)
+    player_two = request.args.get('playerTwo', None)
     player_two_list = validate_against_list(player_two, agent_names)
     layout = request.args.get('layout', None)
     layout_list = validate_against_list(layout, LAYOUTS)
-    game_length = request.args.get('game_length', None)
+    game_length = request.args.get('gameLength', None)
     game_length, was_valid = validate_item_numeric(
         game_length, max_val=MAX_GAME_LENGTH, default_val=DEFAULT_GAME_LENGTH)
 
@@ -423,7 +423,7 @@ def index():
                            agent_names_player_two=player_two_list,
                            layouts=layout_list,
                            game_length=game_length,
-                           allow_change_game_length=True)
+                           allow_change_game_length=not was_valid)
 
 
 @app.route('/mturk')
