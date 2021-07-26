@@ -421,9 +421,7 @@ def index():
         game_length, max_val=MAX_GAME_LENGTH, default_val=DEFAULT_GAME_LENGTH)
 
     # MTurk params
-    # is_on_mturk = bool(request.args.get('assignmentId', False))
-    # print("is on mturk", is_on_mturk)
-    is_on_mturk = True
+    is_on_mturk = bool(request.args.get('assignmentId', False))
 
 
     return render_template('index.html',

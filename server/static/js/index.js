@@ -176,8 +176,7 @@ socket.on('end_game', function(data) {
 
     // for MTurk: show submit button if present
     $('#submit').show();
-    $('#feedback').show();
-    $('#feedback-prompt').show();
+    $('#feedback-section').show();
 
     if (onEndGame) { onEndGame(); }
 

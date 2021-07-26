@@ -33,9 +33,15 @@ $(function() {
       addHiddenField(form, "assignmentId", assignmentId);
 
 
+      var feedback = {
+        feedback_1: $("#feedback-1").val(),
+        feedback_2: $("#feedback-2").val(),
+        feedback_3: $("#feedback-3").val(),
+      }
+
       var results = {
           data: gameData,
-          feedback: $("#feedback").val()
+          feedback: feedback,
       };
 
       addHiddenField(form, "results", JSON.stringify(results));
