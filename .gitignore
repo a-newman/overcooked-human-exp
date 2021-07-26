@@ -9,3 +9,6 @@ node_modules/
 **/agents/
 certs/
 server/data
+
+# jupyter
+.ipynb_checkpoints

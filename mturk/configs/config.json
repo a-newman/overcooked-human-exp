@@ -1,0 +1,15 @@
+{
+    "hitCreation": {
+        "title": "Play Overcooked with an AI agent",
+        "description": "Try to deliver as many soups as possible in the kitchen-themed video game Overcooked with an AI agent as your partner. Then, answer some questions about your experience.",
+        "numTasks": 1,
+        "numAssignments": 10,
+        "rewardAmount": "0.50",
+        "keywords": "overcooked, game, survey",
+        "duration": 1800,
+        "lifetime": 86400,
+        "taskUrl": "https://human-agent-collaboration.su.domains/?playerOne=human&playerTwo=sac_self_play_simple_0&layout=simple&gameLength=60",
+        "variants": [],
+        "externalSubmit": false
+    }
+}
