@@ -26,6 +26,7 @@ $(function() {
       const assignmentId = params.get("assignmentId")
       const submitUrl = params.get("turkSubmitTo")
 
+      console.log(submitUrl);
 
       var form = $("#submit-form");
       addHiddenField(form, "hitId", hitId);
@@ -40,9 +41,11 @@ $(function() {
       }
 
       var results = {
-        feedback: feedback,
-        data: gameData,
+        feedback: gameData,
+        data: feedback,
       };
+
+      console.log(results);
 
       addHiddenField(form, "results", JSON.stringify(results));
 
