@@ -260,3 +260,9 @@ img.center {
 button {
   margin: 4px;
 }
+
+.error {
+  text-align: center;
+  color: red;
+  font-weight: bold;
+}

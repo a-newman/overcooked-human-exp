@@ -80,13 +80,17 @@
         <div id="error-exit" style="display:none">Game ended unexpectedly (probably due to another user disconnecting)</div>
     </div>
     {% include "instructions.html" %}
-    <div id="control" class="text-center">
-        <button type="button" class="btn btn-primary mturk-hide-after-game" id="create">Start Game</button>
-        {% if not mturk %}
-        <button type="button" class="btn btn-secondary" id="join">Join Existing Game</button>
-        <button class="btn btn-secondary" id="leave" style="display:none;">Leave</button>
-        {% endif %}
-    </div>
+    {% if assignment_unaccepted %}
+      <div class="error">Please accept assignment before continuing.</div>
+    {% else %}
+      <div id="control" class="text-center">
+          <button type="button" class="btn btn-primary mturk-hide-after-game" id="create">Start Game</button>
+          {% if not mturk %}
+          <button type="button" class="btn btn-secondary" id="join">Join Existing Game</button>
+          <button class="btn btn-secondary" id="leave" style="display:none;">Leave</button>
+          {% endif %}
+      </div>
+    {% endif %}
     {% if mturk %}
     <div id="feedback-section" style="display:none">
       <div class="text-center">

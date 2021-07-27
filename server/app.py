@@ -421,8 +421,8 @@ def index():
         game_length, max_val=MAX_GAME_LENGTH, default_val=DEFAULT_GAME_LENGTH)
 
     # MTurk params
-    is_on_mturk = bool(request.args.get('assignmentId', False))
-    # is_on_mturk = True
+    is_on_mturk = request.args.get('assignmentId', False)
+    assignment_unaccepted = is_on_mturk == "ASSIGNMENT_ID_NOT_AVAILABLE"
 
     return render_template('index.html',
                            agent_names_player_one=player_one_list,
@@ -430,7 +430,8 @@ def index():
                            layouts=layout_list,
                            game_length=game_length,
                            allow_change_game_length=not was_valid,
-                           mturk=is_on_mturk)
+                           mturk=is_on_mturk,
+                           assignment_unaccepted=assignment_unaccepted)
 
 
 @app.route('/mturk')
