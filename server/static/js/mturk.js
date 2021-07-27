@@ -24,10 +24,9 @@ $(function() {
       const hitId = params.get("hitId")
       const workerId = params.get("workerId")
       const assignmentId = params.get("assignmentId")
-      const submitUrl = params.get("turkSubmitTo")
+      const submitUrl = params.get("turkSubmitTo") + '/mturk/externalSubmit'
 
-      console.log(submitUrl);
-
+      
       var form = $("#submit-form");
       addHiddenField(form, "hitId", hitId);
       addHiddenField(form, "workerId", workerId);
@@ -41,8 +40,8 @@ $(function() {
       }
 
       var results = {
-        feedback: gameData,
-        data: feedback,
+        feedback: feedback,
+        data: gameData,
       };
 
       console.log(results);
