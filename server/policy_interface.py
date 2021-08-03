@@ -17,8 +17,10 @@ def load_policy(model_id, player_idx, agent_dir):
     logdir = os.path.join(agent_dir, model_id, "best")
 
     if not os.path.exists(logdir):
-        raise RuntimeError(
-            "Could not find agent checkpoint at path {}".format(logdir))
+        # raise RuntimeError(
+        #     "Could not find agent checkpoint at path {}".format(logdir))
+        
+        return None
 
     args_path = os.path.join(logdir, "..", "args.json")
 
