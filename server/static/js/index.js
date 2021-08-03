@@ -7,9 +7,20 @@ var gameData;
 // placeholder for a callback that can be added by other scripts
 var onEndGame = false;
 
+// class that handles what subtask we are on
+const taskController = new TaskController()
+
 /* * * * * * * * * * * * * * * *
  * Button click event handlers *
  * * * * * * * * * * * * * * * */
+
+$(function() {
+  taskController.reset();
+  $('#next').click(function() {
+    taskController.advance();
+  })
+})
+
 
 $(function() {
     $('#create').click(function () {
