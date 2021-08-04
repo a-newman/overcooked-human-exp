@@ -28,7 +28,12 @@ class TaskController {
 
   advance() {
     this.curSubTask++;
-    console.log("advancing", this.curSubTask);
+    console.log("advancing", this.curSubTask, "/", this.taskProgression.length);
+
+    if (this.curSubTask >= this.taskProgression.length - 1) {
+      $("#next").hide();
+      $("#next").attr("disabled", true);
+    }
     $(".subtask").hide();
     const newSubTask = this.taskProgression[this.curSubTask];
     console.log("newSubTask", newSubTask);
@@ -47,7 +52,7 @@ class TaskController {
         var title = "Game 1";
         var p1Name = "human";
         var p2Name = "sac_self_play_simple_0";
-        let game1 = new Game(
+        let game1 = new GameSubtask(
           title,
           p1Name,
           p2Name,
@@ -66,7 +71,7 @@ class TaskController {
         title = "Game 2";
         p1Name = "human";
         p2Name = "sac_self_play_simple_1";
-        let game2 = new Game(
+        let game2 = new GameSubtask(
           title,
           p1Name,
           p2Name,
@@ -80,12 +85,6 @@ class TaskController {
         break;
       case "questions2":
         $("#partnerQuestions").show();
-        break;
-      case "selectPartner":
-        $("#selectPartner").show();
-        break;
-      case "finalGame":
-        $("#game").show();
         break;
       case "submit":
         $("#submit").show();

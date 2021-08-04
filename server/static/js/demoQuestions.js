@@ -1,7 +1,7 @@
-class TutorialSubtask {
+class DemoQuestionsSubtask {
   load() {
     // show instructions
-    $("#tutorial").show();
+    $("#demoQuestions").show();
   }
 
   getData() {

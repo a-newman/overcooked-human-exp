@@ -1,4 +1,4 @@
-class Game {
+class GameSubtask {
   constructor(title, p1Name, p2Name, gameLength, socket, layout) {
     this.title = title;
     this.p1Name = p1Name;
