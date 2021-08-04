@@ -13,8 +13,6 @@ class TaskController {
       "questions1",
       "game2",
       "questions2",
-      "selectPartner",
-      "finalGame",
       "submit",
     ];
     this.curSubTask = 0;
