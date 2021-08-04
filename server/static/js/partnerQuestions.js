@@ -1,4 +1,4 @@
-class PartnertQuestionsSubtask {
+class PartnerQuestionsSubtask {
   load() {
     // show instructions
     $("#partnerQuestions").show();

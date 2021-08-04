@@ -6,15 +6,30 @@ class TaskController {
       gameLength: 3,
     };
     this.taskProgression = [
-      "instructions",
-      "demoQuestions",
-      "tutorial",
-      "game1",
-      "questions1",
-      "game2",
-      "questions2",
-      "submit",
+      new InstructionsSubtask(),
+      new DemoQuestionsSubtask(),
+      new TutorialSubtask(),
+      new GameSubtask({
+        title: "Game 1",
+        p1Name: "human",
+        p2Name: "sac_self_play_simple_0",
+        gameLength: this.data.gameLength,
+        socket: this.socket,
+        layout: this.data.layout,
+      }),
+      new PartnerQuestionsSubtask(),
+      new GameSubtask({
+        title: "Game 2",
+        p1Name: "human",
+        p2Name: "sac_self_play_simple_1",
+        gameLength: this.data.gameLength,
+        socket: this.socket,
+        layout: this.data.layout,
+      }),
+      new PartnerQuestionsSubtask(),
+      new SubmitSubtask(),
     ];
+
     this.curSubTask = 0;
 
     $(".subtask").hide();
@@ -35,60 +50,9 @@ class TaskController {
       $("#next").attr("disabled", true);
     }
     $(".subtask").hide();
-    const newSubTask = this.taskProgression[this.curSubTask];
-    console.log("newSubTask", newSubTask);
+    const curSubTask = this.taskProgression[this.curSubTask];
+    console.log("curSubTask", curSubTask);
 
-    switch (newSubTask) {
-      case "instructions":
-        $("#instructions").show();
-        break;
-      case "demoQuestions":
-        $("#demoQuestions").show();
-        break;
-      case "tutorial":
-        $("#tutorial").show();
-        break;
-      case "game1":
-        var title = "Game 1";
-        var p1Name = "human";
-        var p2Name = "sac_self_play_simple_0";
-        let game1 = new GameSubtask(
-          title,
-          p1Name,
-          p2Name,
-          this.data.gameLength,
-          this.socket,
-          this.data.layout
-        );
-
-        game1.load();
-
-        break;
-      case "questions1":
-        $("#partnerQuestions").show();
-        break;
-      case "game2":
-        title = "Game 2";
-        p1Name = "human";
-        p2Name = "sac_self_play_simple_1";
-        let game2 = new GameSubtask(
-          title,
-          p1Name,
-          p2Name,
-          this.data.gameLength,
-          this.socket,
-          this.data.layout
-        );
-
-        game2.load();
-
-        break;
-      case "questions2":
-        $("#partnerQuestions").show();
-        break;
-      case "submit":
-        $("#submit").show();
-        break;
-    }
+    curSubTask.load();
   }
 }
