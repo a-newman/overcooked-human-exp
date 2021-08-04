@@ -433,6 +433,12 @@ def index():
                            mturk=is_on_mturk,
                            assignment_unaccepted=assignment_unaccepted)
 
+
+@app.route('/experiment')
+def experiment():
+    return render_template('experiment.html')
+
+
 @app.route('/warmup')
 def warmup():
     agent_names = get_agent_names()
