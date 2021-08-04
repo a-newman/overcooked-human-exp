@@ -5,34 +5,47 @@ class TaskController {
       layout: "simple",
       gameLength: 3,
     };
-    this.taskProgression = [
-      new InstructionsSubtask(),
-      new DemoQuestionsSubtask(),
-      new TutorialSubtask(),
-      new GameSubtask({
-        title: "Game 1",
-        p1Name: "human",
-        p2Name: "sac_self_play_simple_0",
-        gameLength: this.data.gameLength,
-        socket: this.socket,
-        layout: this.data.layout,
-      }),
-      new PartnerQuestionsSubtask(),
-      new GameSubtask({
-        title: "Game 2",
-        p1Name: "human",
-        p2Name: "sac_self_play_simple_1",
-        gameLength: this.data.gameLength,
-        socket: this.socket,
-        layout: this.data.layout,
-      }),
-      new PartnerQuestionsSubtask(),
-      new SubmitSubtask(),
-    ];
-
+    this.config = {
+      games: [
+        ["human", "sac_self_play_simple_0"],
+        ["human", "sac_self_play_simple_1"],
+      ],
+      nGamesPerPartner: 1,
+      nSecondsPerGame: 3,
+      layout: "simple",
+    };
+    this.taskProgression = this.constructTaskProgressionFromConfig(this.config);
+    console.log("taskProgression", this.taskProgression);
     this.curSubTask = 0;
 
     $(".subtask").hide();
+  }
+
+  constructTaskProgressionFromConfig(config) {
+    const taskProgression = [];
+    taskProgression.push(new InstructionsSubtask());
+    taskProgression.push(new DemoQuestionsSubtask());
+    taskProgression.push(new TutorialSubtask());
+    config.games.forEach((playerNames, iPartner) => {
+      // push some game subtasks
+      for (var iGame = 0; iGame < config.nGamesPerPartner; iGame++) {
+        var title = `Partner ${iPartner + 1}, Game ${iGame + 1}`;
+        taskProgression.push(
+          new GameSubtask({
+            title: title,
+            p1Name: playerNames[0],
+            p2Name: playerNames[1],
+            gameLength: config.nSecondsPerGame,
+            layout: config.layout,
+            socket: this.socket,
+          })
+        );
+      }
+      // push a question subtask
+      taskProgression.push(new PartnerQuestionsSubtask());
+    });
+    taskProgression.push(new SubmitSubtask());
+    return taskProgression;
   }
 
   reset() {
