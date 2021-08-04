@@ -554,7 +554,6 @@ class OvercookedGame(Game):
         prev_state = self.state
         self.state, info = self.mdp.get_state_transition(
             prev_state, joint_action)
-        # import pdb; pdb.set_trace()
 
         if self.show_potential:
             self.phi = self.mdp.potential_function(prev_state,
@@ -678,10 +677,8 @@ class OvercookedRecorder(OvercookedGame):
         get_data: Returns the accumulated trajectory data and clears the self.trajectory instance variable
 
     """
-    def __init__(self, config, *args, **kwargs):
-        super(OvercookedRecorder, self).__init__(*args,
-                                                 showPotential=False,
-                                                 **kwargs)
+    def __init__(self, config, **kwargs):
+        super(OvercookedRecorder, self).__init__(showPotential=False, **kwargs)
         self.trial_id = None
         self.trajectory = []
         self.data_saver = get_data_saver(config['data_storage'])
