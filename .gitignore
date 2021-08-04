@@ -12,3 +12,8 @@ server/data
 
 # jupyter
 .ipynb_checkpoints
+
+
+# swp files 
+*.sw[oap]
+.DS_Store

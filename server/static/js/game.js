@@ -53,7 +53,7 @@ class Game {
     const params = {
       playerZero: this.p1Name,
       playerOne: this.p2Name,
-      layout: this.layout,
+      layouts: [this.layout],
       gameTime: this.gameLength,
     };
     console.log("params", params);
