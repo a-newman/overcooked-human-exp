@@ -19,13 +19,14 @@ def load_policy(model_id, player_idx, agent_dir):
     if not os.path.exists(logdir):
         # raise RuntimeError(
         #     "Could not find agent checkpoint at path {}".format(logdir))
-        
+
         return None
 
     args_path = os.path.join(logdir, "..", "args.json")
 
     # Get training params
     train_params = Dict2Obj(json.load(open(args_path, "r")))
+    train_params.weight_decay = 0  # for backwards compatibility
     train_params.device = 'cpu'
     num_agents = 2
 
@@ -36,9 +37,9 @@ def load_policy(model_id, player_idx, agent_dir):
     policy.load(logdir)
     policy.eval()
 
-    # Multi agent policy, so just grab the one corresponding to the current index
+    # Multi agent policy, so just grab the one corresponding to the first index
     # TODO: is this the behavior we want?
-    policy = policy.policies[player_idx]
+    policy = policy.policies[0]
 
     policy.idx = player_idx
 

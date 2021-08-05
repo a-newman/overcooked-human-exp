@@ -17,10 +17,10 @@ from threading import Lock
 
 from flask import Flask, jsonify, render_template, request
 from flask_socketio import SocketIO, emit, join_room, leave_room
+from server_utils import ThreadSafeDict, ThreadSafeSet
 
 import game
 from game import Game, OvercookedGame, OvercookedRecorder, OvercookedTutorial
-from utils import ThreadSafeDict, ThreadSafeSet
 
 ### Thoughts -- where I'll log potential issues/ideas as they come up
 # Should make game driver code more error robust -- if overcooked randomlly errors we should catch it and report it to user
