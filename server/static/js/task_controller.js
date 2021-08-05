@@ -1,18 +1,21 @@
 CONFIG_PATH = "static/configs/";
-DEFAULT_CONFIG = CONFIG_PATH + "default.json";
+DEFAULT_CONFIG = "default.json";
 
 class TaskController {
-  constructor(socket, configFile) {
-    if (!configFile) {
-      configFile = DEFAULT_CONFIG;
+  constructor(socket) {
+    const urlParams = new URLSearchParams(window.location.search);
+    this.configFile = urlParams.get("config");
+    if (!this.configFile) {
+      this.configFile = DEFAULT_CONFIG;
     }
-    this.configFile = configFile;
-    console.log("loading data from", this.configFile);
+
+    const configPath = CONFIG_PATH + this.configFile;
+    console.log("loading data from", configPath);
     this.socket = socket;
     this.isLoaded = false;
 
     // load a config file
-    $.getJSON(this.configFile)
+    $.getJSON(configPath)
       .done(
         function (config) {
           this.taskProgression =
