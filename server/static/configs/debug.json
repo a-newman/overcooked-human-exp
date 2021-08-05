@@ -3,10 +3,6 @@
         [
             "human",
             "sac_self_play_simple_0"
-        ],
-        [
-            "human",
-            "sac_self_play_simple_1"
         ]
     ],
     "nGamesPerPartner": 1,
