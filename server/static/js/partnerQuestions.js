@@ -5,6 +5,8 @@ class PartnerQuestionsSubtask {
   }
 
   getData() {
-    // TODO
+    // TODO: get and valdiate real data
+    const data = { placeholder: "game data for partnerquestions" };
+    return { data };
   }
 }

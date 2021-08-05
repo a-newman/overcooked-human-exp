@@ -4,6 +4,8 @@ class SubmitSubtask {
   }
 
   getData() {
-    // TODO
+    // TODO: get and valdiate real data
+    const data = { placeholder: "game data for submit" };
+    return { data };
   }
 }

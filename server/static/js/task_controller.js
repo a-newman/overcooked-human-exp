@@ -18,9 +18,12 @@ class TaskController {
     $.getJSON(configPath)
       .done(
         function (config) {
+          // set taskProgression
           this.taskProgression =
             this.constructTaskProgressionFromConfig(config);
           console.log("taskProgression", this.taskProgression);
+          // initialize data
+          this.data = new Array(this.taskProgression.length).fill({});
           this.isLoaded = true;
           this.reset();
         }.bind(this)
@@ -62,10 +65,12 @@ class TaskController {
     if (!this.isLoaded) {
       return;
     }
-    console.log("resetting");
 
     // hide subtasks
     $(".subtask").hide();
+
+    // hide errors
+    $("#error-messsage").hide();
 
     // prep next button
     $("#next").click(
@@ -80,6 +85,22 @@ class TaskController {
   }
 
   advance() {
+    $("#error-message").hide();
+
+    if (this.curSubTask >= 0) {
+      const oldTask = this.taskProgression[this.curSubTask];
+      const { data, error } = oldTask.getData();
+      if (error) {
+        $("#error-message").text(error);
+        $("#error-message").show();
+        return;
+      } else if (data) {
+        this.data[this.curSubTask] = data;
+      }
+    }
+    console.log("this.data", this.data);
+
+    // procede with advancing
     this.curSubTask++;
     console.log("advancing", this.curSubTask, "/", this.taskProgression.length);
 
@@ -89,7 +110,6 @@ class TaskController {
     }
     $(".subtask").hide();
     const curSubTask = this.taskProgression[this.curSubTask];
-    console.log("curSubTask", curSubTask);
 
     curSubTask.load();
   }

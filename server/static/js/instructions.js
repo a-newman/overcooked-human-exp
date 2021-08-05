@@ -6,5 +6,6 @@ class InstructionsSubtask {
 
   getData() {
     // no-op
+    return {};
   }
 }

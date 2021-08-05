@@ -53,6 +53,12 @@ class GameSubtask {
     this.socket.on("end_lobby", this.endLobby.bind(this));
   }
 
+  getData() {
+    // TODO: get and validate the real data
+    const data = { placeholder: `game data for ${this.title}` };
+    return { data };
+  }
+
   start() {
     const params = {
       playerZero: this.p1Name,
@@ -237,4 +243,3 @@ function enable_key_listener() {
 function disable_key_listener() {
   $(document).off("keydown");
 }
-

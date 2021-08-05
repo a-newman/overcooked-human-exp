@@ -5,6 +5,8 @@ class TutorialSubtask {
   }
 
   getData() {
-    // TODO
+    // TODO: get and valdiate real data
+    const data = { placeholder: "game data for tutorial" };
+    return { data };
   }
 }
