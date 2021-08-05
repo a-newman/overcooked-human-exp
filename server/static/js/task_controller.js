@@ -42,16 +42,15 @@ class TaskController {
     const taskProgression = [];
     taskProgression.push(new InstructionsSubtask());
     taskProgression.push(new DemoQuestionsSubtask());
-    taskProgression.push(
-      new TutorialSubtask({
-        title: "Tutorial",
-        p1Name: "human",
-        p2Name: "None",
-        gameLength: config.nSecondsPerTutorial,
-        layout: "simple",
-        socket: this.socket,
-      })
-    );
+    const tutorialGame = new GameSubtask({
+      title: "Tutorial",
+      p1Name: "human",
+      p2Name: "None",
+      gameLength: config.nSecondsPerTutorial,
+      layout: "simple",
+      socket: this.socket,
+    });
+    taskProgression.push(new TutorialSubtask(tutorialGame));
     config.games.forEach((playerNames, iPartner) => {
       // push some game subtasks
       for (var iGame = 0; iGame < config.nGamesPerPartner; iGame++) {
