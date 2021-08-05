@@ -19,5 +19,6 @@
     ],
     "nGamesPerPartner": 1,
     "nSecondsPerGame": 60,
+    "nSecondsPerTutorial": 60,
     "layout": "simple"
 }

@@ -44,10 +44,10 @@ class TaskController {
     taskProgression.push(new DemoQuestionsSubtask());
     taskProgression.push(
       new TutorialSubtask({
-        title: "Warmup",
+        title: "Tutorial",
         p1Name: "human",
         p2Name: "None",
-        gameLength: 2,
+        gameLength: config.nSecondsPerTutorial,
         layout: "simple",
         socket: this.socket,
       })
