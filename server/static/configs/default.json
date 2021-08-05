@@ -1,0 +1,23 @@
+{
+    "games": [
+        [
+            "human",
+            "sac_self_play_simple_0"
+        ],
+        [
+            "human",
+            "sac_self_play_simple_1"
+        ],
+        [
+            "human",
+            "sac_self_play_simple_2"
+        ],
+        [
+            "human",
+            "sac_self_play_simple_3"
+        ]
+    ],
+    "nGamesPerPartner": 1,
+    "nSecondsPerGame": 60,
+    "layout": "simple"
+}

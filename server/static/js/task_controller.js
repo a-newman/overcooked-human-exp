@@ -1,24 +1,31 @@
-class TaskController {
-  constructor(socket) {
-    this.socket = socket;
-    this.data = {
-      layout: "simple",
-      gameLength: 3,
-    };
-    this.config = {
-      games: [
-        ["human", "sac_self_play_simple_0"],
-        ["human", "sac_self_play_simple_1"],
-      ],
-      nGamesPerPartner: 1,
-      nSecondsPerGame: 3,
-      layout: "simple",
-    };
-    this.taskProgression = this.constructTaskProgressionFromConfig(this.config);
-    console.log("taskProgression", this.taskProgression);
-    this.curSubTask = 0;
+CONFIG_PATH = "static/configs/";
+DEFAULT_CONFIG = CONFIG_PATH + "default.json";
 
-    $(".subtask").hide();
+class TaskController {
+  constructor(socket, configFile) {
+    if (!configFile) {
+      configFile = DEFAULT_CONFIG;
+    }
+    this.configFile = configFile;
+    console.log("loading data from", this.configFile);
+    this.socket = socket;
+    this.isLoaded = false;
+
+    // load a config file
+    $.getJSON(this.configFile)
+      .done(
+        function (config) {
+          this.taskProgression =
+            this.constructTaskProgressionFromConfig(config);
+          console.log("taskProgression", this.taskProgression);
+          this.isLoaded = true;
+          this.reset();
+        }.bind(this)
+      )
+      .fail(function (jqxhr, textStatus, error) {
+        const errMessage = textStatus + ", " + error;
+        console.log("Error loading experiment config file: ", errMessage);
+      });
   }
 
   constructTaskProgressionFromConfig(config) {
@@ -49,7 +56,22 @@ class TaskController {
   }
 
   reset() {
+    if (!this.isLoaded) {
+      return;
+    }
     console.log("resetting");
+
+    // hide subtasks
+    $(".subtask").hide();
+
+    // prep next button
+    $("#next").click(
+      function () {
+        console.log("clicking next");
+        this.advance();
+      }.bind(this)
+    );
+
     this.curSubTask = -1;
     this.advance();
   }

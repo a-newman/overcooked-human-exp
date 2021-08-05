@@ -14,10 +14,8 @@ const taskController = new TaskController(socket);
  * * * * * * * * * * * * * * * */
 
 $(function () {
+  // this must happen AFTER the DOM is rendered!
   taskController.reset();
-  $("#next").click(function () {
-    taskController.advance();
-  });
 });
 
 $(function () {
