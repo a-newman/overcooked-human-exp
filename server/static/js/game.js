@@ -6,6 +6,10 @@ class GameSubtask {
     this.gameLength = gameLength;
     this.socket = socket;
     this.layout = layout;
+
+    // socket event handlers
+    window.intervalID = -1;
+    window.spectating = true;
   }
 
   load() {
@@ -195,3 +199,42 @@ class GameSubtask {
     window.intervalID = -1;
   }
 }
+
+// key event helpers
+function enable_key_listener() {
+  $(document).on("keydown", function (e) {
+    let action = "STAY";
+    switch (e.which) {
+      case 37: // left
+        action = "LEFT";
+        break;
+
+      case 38: // up
+        action = "UP";
+        break;
+
+      case 39: // right
+        action = "RIGHT";
+        break;
+
+      case 40: // down
+        action = "DOWN";
+        break;
+
+      case 32: //space
+        action = "SPACE";
+        break;
+
+      default:
+        // exit this handler for other keys
+        return;
+    }
+    e.preventDefault();
+    socket.emit("action", { action: action });
+  });
+}
+
+function disable_key_listener() {
+  $(document).off("keydown");
+}
+
