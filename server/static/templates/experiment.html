@@ -56,19 +56,21 @@
     <link rel="stylesheet" href="static/css/style.css" type="text/css" />
   </head>
   <body>
-    <h1 class="text-center">Overcooked Game</h1>
-    {% include "mturk_error.html" %} {% include "instructions_inline.html" %} {%
-    include "demoQuestions.html" %} {% include "tutorial.html" %} {% include
-    "game.html" %} {% include "partner_questions.html" %} {% include
-    "select_partner.html" %} {% include "submit.html" %}
+    <div class="game-container">
+      <h1 class="text-center game-title">Overcooked Game</h1>
+      {% include "mturk_error.html" %} {% include "instructions_inline.html" %}
+      {% include "demoQuestions.html" %} {% include "tutorial.html" %} {%
+      include "game.html" %} {% include "partner_questions.html" %} {% include
+      "select_partner.html" %} {% include "submit.html" %}
 
-    <div class="text-center error" id="error-message"></div>
+      <div class="text-center error" id="error-message"></div>
 
-    <div class="text-center">
-      <button type="button" class="btn btn-primary" id="next">Next</button>
-    </div>
-    <div class="row">
-      <form id="submit-form" name="submit-form"></form>
+      <div class="text-center">
+        <button type="button" class="btn btn-primary" id="next">Next</button>
+      </div>
+      <div class="row">
+        <form id="submit-form" name="submit-form"></form>
+      </div>
     </div>
 
     <noscript>

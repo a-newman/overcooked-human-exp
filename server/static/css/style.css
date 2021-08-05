@@ -270,3 +270,14 @@ button {
 #next {
   margin:10px
 }
+
+.game-container {
+  width: 80%;
+  margin: 0 auto;
+  padding-bottom: 50px;
+}
+
+.game-title {
+  font-weight: bold;
+  margin: 20px;
+}
