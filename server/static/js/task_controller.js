@@ -28,10 +28,14 @@ class TaskController {
           this.reset();
         }.bind(this)
       )
-      .fail(function (jqxhr, textStatus, error) {
-        const errMessage = textStatus + ", " + error;
-        console.log("Error loading experiment config file: ", errMessage);
-      });
+      .fail(
+        function (jqxhr, textStatus, error) {
+          const errMessage = `Could not load config file ${this.configFile}, failed with error: ${error}`;
+          $(".subtask").hide();
+          $("#error-message").text(errMessage);
+          $("#error-message").show();
+        }.bind(this)
+      );
   }
 
   constructTaskProgressionFromConfig(config) {
