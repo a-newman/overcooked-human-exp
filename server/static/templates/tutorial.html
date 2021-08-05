@@ -1,3 +1,40 @@
-<div class="text-center subtask" id="tutorial">
-  <p>Tutorial here</p>
+<div class="subtask" id="game">
+  <!-- <div class="game-info">
+    <p>Welcome to the warmup section. Use this opportunity to familiarize yourself with the controls. Reminders: </p>
+    <p>1. Use arrow keys to move and space bar to interact.</p>
+    <p>2. Put 3 onions in the pot and they will cook.</p>
+    <p>3. Use bowls to pick up soups.</p>
+    <p>4. You get points for delivering soups to the door.</p>
+  </div> -->
+  <div class="game-info" id="game-info">
+    <h1><span id="game-title"></span></h1>
+    <p><b>Player 1: </b><span id="player-1-name"></span></p>
+    <p><b>Player 2: </b><span id="player-2-name"></span></p>
+    <p><b>Game duration: </b><span id="game-duration"></span></p>
+  </div>
+  <!-- <h4 id="tutorial" class="text-center"><a href="./tutorial">Tutorial</a></h4> -->
+  <div id="lobby" , class="text-center" style="display: none">
+    <h4 class="text-center">Game Lobby</h4>
+    Waiting for game to start...
+  </div>
+  <div id="waiting" , class="text-center" style="display: none">
+    Waiting for game to be created. Please be patient...
+  </div>
+  <div id="overcooked-container" class="text-center">
+    <h4 id="game-title" style="display: none">Game in Progress</h4>
+    <h4 id="game-over" style="display: none">Game Over</h4>
+    <div id="overcooked"></div>
+    <div id="error-exit" style="display: none">
+      Game ended unexpectedly (probably due to another user disconnecting)
+    </div>
+  </div>
+  <div id="control" class="text-center">
+    <button
+      type="button"
+      class="btn btn-primary mturk-hide-after-game"
+      id="create"
+    >
+      Start Game
+    </button>
+  </div>
 </div>
