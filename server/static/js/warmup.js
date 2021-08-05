@@ -18,7 +18,7 @@ $(function() {
         params.layout = "simple";
         params.playerZero = "human";
         params.playerOne = "none";
-        params.gameTime = "99999";
+        params.gameTime = "99999"
 
         params.layouts = [params.layout];
 

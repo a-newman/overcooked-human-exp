@@ -1,5 +1,5 @@
 CONFIG_PATH = "static/configs/";
-DEFAULT_CONFIG = "default.json";
+DEFAULT_CONFIG = "debug.json";
 
 class TaskController {
   constructor(socket) {
@@ -104,7 +104,7 @@ class TaskController {
     }
     console.log("this.data", this.data);
 
-    // procede with advancing
+    // proceed with advancing
     this.curSubTask++;
     console.log("advancing", this.curSubTask, "/", this.taskProgression.length);
 

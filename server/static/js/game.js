@@ -54,8 +54,7 @@ class GameSubtask {
   }
 
   getData() {
-    // TODO: get and validate the real data
-    const data = { placeholder: `game data for ${this.title}` };
+    const data = gameData;
     return { data };
   }
 
