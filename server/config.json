@@ -5,13 +5,14 @@
         "asymmetric_advantages",
         "coordination_ring",
         "forced_coordination",
-        "counter_circuit"
+        "counter_circuit",
+        "simple_single_agent"
     ],
     "MAX_GAMES": 10,
-    "MAX_GAME_LENGTH": 120,
+    "MAX_GAME_LENGTH": 1000,
     "AGENT_DIR": "./static/agents",
     "MAX_FPS": 30,
-    "TICKS_PER_AI_ACTION": 5,
+    "TICKS_PER_AI_ACTION": 7,
     "REWARD_PER_SOUP": 1,
     "data_storage": {
         "storage_method": "save_to_file",
