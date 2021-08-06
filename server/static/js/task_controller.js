@@ -41,8 +41,8 @@ class TaskController {
   constructTaskProgressionFromConfig(config) {
     const taskProgression = [];
     taskProgression.push(new OverviewSubtask(config.games.length));
-    taskProgression.push(new InstructionsSubtask());
     taskProgression.push(new DemoQuestionsSubtask());
+    taskProgression.push(new InstructionsSubtask());
     const tutorialGame = new GameSubtask({
       title: "Tutorial",
       p1Name: "human",
