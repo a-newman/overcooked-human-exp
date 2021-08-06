@@ -48,7 +48,7 @@ class TaskController {
       p1Name: "human",
       p2Name: "None",
       gameLength: config.nSecondsPerTutorial,
-      layout: "simple",
+      layout: "simple_single_agent",
       socket: this.socket,
     });
     taskProgression.push(new TutorialSubtask(tutorialGame));
