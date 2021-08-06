@@ -281,3 +281,14 @@ button {
   font-weight: bold;
   margin: 20px;
 }
+
+.instructions-carousel-container {
+  max-width: 650px;
+  width: 65%;
+  margin: 0 auto;
+}
+
+.carousel-caption p {
+  color: black;
+  background-color: hsla(0, 100%, 100%, 0.5);
+}
