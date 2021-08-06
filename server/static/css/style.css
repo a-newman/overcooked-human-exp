@@ -282,10 +282,11 @@ button {
   margin: 20px;
 }
 
-.instructions-carousel-container {
+.instr-image {
   max-width: 650px;
   width: 65%;
   margin: 0 auto;
+  display: block;
 }
 
 .carousel-caption p {
