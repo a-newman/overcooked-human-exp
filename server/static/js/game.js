@@ -1,11 +1,22 @@
 class GameSubtask {
-  constructor({ title, p1Name, p2Name, gameLength, socket, layout }) {
+  constructor({
+    title,
+    p1Name,
+    p2Name,
+    gameLength,
+    socket,
+    layout,
+    partnerNum,
+    totalPartners,
+  }) {
     this.title = title;
     this.p1Name = p1Name;
     this.p2Name = p2Name;
     this.gameLength = gameLength;
     this.socket = socket;
     this.layout = layout;
+    this.partnerNum = partnerNum;
+    this.totalPartners = totalPartners;
 
     // socket event handlers
     window.intervalID = -1;
@@ -14,12 +25,15 @@ class GameSubtask {
 
   load() {
     // set the game title
-    $("#game-title").text(this.title);
+    $(".game-title").text(this.title);
 
     // make the correct params visible in the UI
-    $("#player-1-name").text(this.p1Name);
-    $("#player-2-name").text(this.p2Name);
-    $("#game-duration").text(this.gameLength);
+    $(".player-1-name").text(this.p1Name);
+    $(".player-2-name").text(this.p2Name);
+    $(".game-duration").text(this.gameLength);
+    $(".partner-num").text(this.partnerNum);
+    $(".total-partners").text(this.totalPartners);
+    $(".game-info").show();
 
     // clear the game visuals
     $("#overcooked").empty();

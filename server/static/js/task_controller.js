@@ -64,6 +64,8 @@ class TaskController {
             gameLength: config.nSecondsPerGame,
             layout: config.layout,
             socket: this.socket,
+            partnerNum: iPartner + 1,
+            totalPartners: config.games.length,
           })
         );
       }

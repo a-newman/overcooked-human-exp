@@ -7,6 +7,7 @@ class TutorialSubtask {
     // show tutorial instructions
     $("#tutorial").show();
     this.gameSubtask.load();
+    $(".game-info").hide();
   }
 
   getData() {
