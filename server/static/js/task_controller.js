@@ -1,5 +1,5 @@
 CONFIG_PATH = "static/configs/";
-DEFAULT_CONFIG = "default.json";
+DEFAULT_CONFIG = "debug.json";
 
 class TaskController {
   constructor(socket) {

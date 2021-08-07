@@ -1,7 +1,9 @@
 <div class="text-center subtask" id="demoQuestions">
   <p>Please answer a couple of questions about yourself.</p>
-
+  
   <div align="left">
+    <hr />
+
 
     <p>What is your gender?</p>
     <div>
@@ -20,8 +22,12 @@
       <input type="radio" id="nodisclose" name="gender" value="NotDisclose">
       <label for="nodisclose">Prefer not to disclose</label>
     </div>
-    <input type="radio" name="gender" value="SelfDescribe">Prefer to self describe: <input type="text" name="other_reason" id="describegender"/>
+    <div>
+      <input type="radio" id="selfdescribe" name="gender" value="SelfDescribe">
+      <label for="selfdescribe">Prefer to self describe:</label> <input type="text" name="other_reason" id="describegender"/>
+    </div>
 
+    <hr />
 
     <p>What is your age?</p>
     <div>
@@ -57,5 +63,8 @@
       <label for="a75">75 years or older</label>
     </div>
   </div>
+  <hr />
 
 </div>
+
+

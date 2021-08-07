@@ -6,7 +6,7 @@
         ]
     ],
     "nGamesPerPartner": 1,
-    "nSecondsPerGame": 3,
-    "nSecondsPerTutorial": 3,
+    "nSecondsPerGame": 1,
+    "nSecondsPerTutorial": 1,
     "layout": "simple"
 }

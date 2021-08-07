@@ -16,6 +16,7 @@ class PartnerQuestionsSubtask {
     const flexible = $("input[type='radio'][name='flexible']:checked").val();
     const predictable = $("input[type='radio'][name='predictable']:checked").val();
 
+    const partnerFeedback = $("#partner-feedback").val();
 
 
 
@@ -39,6 +40,7 @@ class PartnerQuestionsSubtask {
       efficient: efficient,
       flexible: flexible,
       predictable: predictable,
+      partnerFeedback: partnerFeedback,
     }
 
 
