@@ -118,14 +118,85 @@ class TaskController {
     // proceed with advancing
     this.curSubTask++;
     console.log("advancing", this.curSubTask, "/", this.taskProgression.length);
-
+ 
     if (this.curSubTask >= this.taskProgression.length - 1) {
+      console.log("WELCOMEa");
       $("#next").hide();
       $("#next").attr("disabled", true);
+      $("#submission-button").show();
+
+      $("#submission-button").click(
+        function () {
+          this.submit()
+        }.bind(this)
+      );
+  
     }
     $(".subtask").hide();
     const curSubTask = this.taskProgression[this.curSubTask];
 
     curSubTask.load();
   }
+
+  submit() {
+    //get data from final subtask
+    $("#error-message").hide();
+
+    if (this.curSubTask >= 0) {
+      const oldTask = this.taskProgression[this.curSubTask];
+      const { data, error } = oldTask.getData();
+      if (error) {
+        $("#error-message").text(error);
+        $("#error-message").show();
+        return;
+      } else if (data) {
+        this.data[this.curSubTask] = data;
+      }
+    }
+
+    //post data
+
+    function parseURLQuery() {
+      const params = new URLSearchParams(window.location.search)
+  
+      mturkConfig.assignmentId = params.get('assignmentId');
+    };
+  
+    function addHiddenField(form, name, value) {
+      // form is a jQuery object, name and value are strings
+      var input = $("<input type='hidden' name='" + name + "' value=''>");
+      input.val(value);
+      form.append(input);
+    }
+
+    const params = new URLSearchParams(window.location.search)
+
+    const hitId = params.get("hitId")
+    const workerId = params.get("workerId")
+    const assignmentId = params.get("assignmentId")
+    const submitUrl = params.get("turkSubmitTo") + '/mturk/externalSubmit'
+
+    
+    var form = $("#submit-form");
+    addHiddenField(form, "hitId", hitId);
+    addHiddenField(form, "workerId", workerId);
+    addHiddenField(form, "assignmentId", assignmentId);
+
+    var results = {
+      data: this.data,
+    };
+
+    console.log(results);
+
+    addHiddenField(form, "results", JSON.stringify(results));
+
+    $("#submit-form").attr("action", submitUrl);
+    $("#submit-form").attr("method", "POST");
+    $("#submit-form").submit();
+
+  }
+
 }
+
+
+
