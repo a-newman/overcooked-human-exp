@@ -297,3 +297,26 @@ button {
 label {
   font-weight: normal !important;
 }
+
+.question-prompt {
+  /* style="margin-top: 25px; margin-bottom: 20px; text-align: left; font-weight: bold" */
+  margin-top: 25px;
+  margin-bottom: 20px; 
+  text-align: left; 
+  font-weight: bold;
+}
+
+.question-answer-container {
+  /* style="display: flex; justify-content: space-between" */
+  display: flex; 
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.question-radio-option {
+  /* style="display: inline-block; text-align: center" */
+  display: inline-block; 
+  text-align: center;
+  width: 19%;
+  padding: 10px;
+}
