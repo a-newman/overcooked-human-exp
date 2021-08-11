@@ -43,6 +43,9 @@ class PartnerQuestionsSubtask {
       partnerFeedback: partnerFeedback,
     }
 
+    //clear text box
+    $("#partner-feedback").val('');
+
 
     return { data, error: errorMessage };
   }

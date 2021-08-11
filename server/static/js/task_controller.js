@@ -1,5 +1,5 @@
 CONFIG_PATH = "static/configs/";
-DEFAULT_CONFIG = "debug.json";
+DEFAULT_CONFIG = "default.json";
 
 class TaskController {
   constructor(socket) {
@@ -120,7 +120,6 @@ class TaskController {
     console.log("advancing", this.curSubTask, "/", this.taskProgression.length);
  
     if (this.curSubTask >= this.taskProgression.length - 1) {
-      console.log("WELCOMEa");
       $("#next").hide();
       $("#next").attr("disabled", true);
       $("#submission-button").show();
