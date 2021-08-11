@@ -1,6 +1,7 @@
 CONFIG_PATH = "static/configs/";
 DEFAULT_CONFIG = "default.json";
 
+
 class TaskController {
   constructor(socket) {
     const urlParams = new URLSearchParams(window.location.search);
@@ -24,6 +25,8 @@ class TaskController {
           console.log("taskProgression", this.taskProgression);
           // initialize data
           this.data = new Array(this.taskProgression.length).fill({});
+          config.path = this.configFile;
+          this.data.push(config);
           this.isLoaded = true;
           this.reset();
         }.bind(this)
@@ -140,6 +143,7 @@ class TaskController {
   submit() {
     //get data from final subtask
     $("#error-message").hide();
+    $("#loading-section").show();
 
     if (this.curSubTask >= 0) {
       const oldTask = this.taskProgression[this.curSubTask];
