@@ -30,6 +30,7 @@ class PartnerQuestionsSubtask {
       $('input[name=efficient]').attr('checked',false);
       $('input[name=flexible]').attr('checked',false);
       $('input[name=predictable]').attr('checked',false);
+      $("#partner-feedback").val('');
     }
 
     const data = {
@@ -42,9 +43,6 @@ class PartnerQuestionsSubtask {
       predictable: predictable,
       partnerFeedback: partnerFeedback,
     }
-
-    //clear text box
-    $("#partner-feedback").val('');
 
 
     return { data, error: errorMessage };
