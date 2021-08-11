@@ -6,15 +6,15 @@
         ],
         [
             "human",
-            "sac_self_play_simple_1"
+            "nct_simple"
         ],
         [
             "human",
-            "sac_self_play_simple_2"
+            "action_cml_simple"
         ],
         [
             "human",
-            "sac_self_play_simple_3"
+            "bc_simple"
         ]
     ],
     "nGamesPerPartner": 1,

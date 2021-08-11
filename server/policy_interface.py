@@ -9,7 +9,7 @@ import numpy as np
 from models.utils import get_policy
 from tianshou.data import Batch, Dict2Obj
 from tianshou.env.overcooked.action import Action
-from tianshou.policy import MetaRLPolicy, ProdMetaRLPolicy
+from tianshou.policy import MetaRLPolicy, MultiAgentPolicy, ProdMetaRLPolicy
 
 
 def load_policy(model_id, player_idx, agent_dir):
@@ -38,9 +38,10 @@ def load_policy(model_id, player_idx, agent_dir):
     policy.load(logdir)
     policy.eval()
 
-    # Multi agent policy, so just grab the one corresponding to the first index
-    # TODO: is this the behavior we want?
-    policy = policy.policies[0]
+    if isinstance(policy, MultiAgentPolicy):
+        # Multi agent policy, so just grab the one corresponding to the first index
+        # TODO: is this the behavior we want?
+        policy = policy.policies[0]
 
     # if the policy is a Meta-RL policy, we need to wrap it so it can store its
     # own data
