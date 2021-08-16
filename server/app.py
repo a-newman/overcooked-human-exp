@@ -109,6 +109,7 @@ GAME_NAME_TO_CLS = {
     "overcooked_recorder": OvercookedRecorder
 }
 
+
 game._configure(MAX_GAME_LENGTH, AGENT_DIR, TICKS_PER_AI_ACTION,
                 REWARD_PER_SOUP)
 
