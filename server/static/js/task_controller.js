@@ -53,6 +53,7 @@ class TaskController {
       gameLength: config.nSecondsPerTutorial,
       layout: "simple_single_agent",
       socket: this.socket,
+      gameType: "tutorial",
     });
     taskProgression.push(new TutorialSubtask(tutorialGame));
     config.games.forEach((playerNames, iPartner) => {
@@ -69,6 +70,7 @@ class TaskController {
             socket: this.socket,
             partnerNum: iPartner + 1,
             totalPartners: config.games.length,
+            gameType: "overcooked_recorder",
           })
         );
       }

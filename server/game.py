@@ -737,76 +737,95 @@ class OvercookedRecorder(OvercookedGame):
         return data
 
 
-class OvercookedTutorial(OvercookedGame):
+class OvercookedTutorial(OvercookedRecorder):
     """
-    Wrapper on OvercookedGame that includes additional data for tutorial mechanics, most notably the introduction of tutorial "phases"
+    Wrapper on OvercookedRecorder that incorporates tutorial mechanics
 
     Instance Variables:
-        - curr_phase (int): Indicates what tutorial phase we are currently on
-        - phase_two_score (float): The exact sparse reward the user must obtain to advance past phase 2
+        - trajectory (list(dict)): list of state-action pairs in current trajectory
+        - trial_id (string): Unique identifier for each game
+
+    Methods:
+        get_data: Returns the accumulated trajectory data and clears the self.trajectory instance variable
+
     """
-    def __init__(self,
-                 layouts=["tutorial_0"],
-                 mdp_params={},
-                 playerZero='human',
-                 playerOne='AI',
-                 phaseTwoScore=15,
-                 **kwargs):
-        super(OvercookedTutorial, self).__init__(layouts=layouts,
-                                                 mdp_params=mdp_params,
-                                                 playerZero=playerZero,
-                                                 playerOne=playerOne,
-                                                 showPotential=False,
-                                                 **kwargs)
-        self.phase_two_score = phaseTwoScore
-        self.phase_two_finished = False
-        self.max_time = 0
-        self.max_players = 2
-        self.ticks_per_ai_action = TICKS_PER_AI_ACTION
-        self.curr_phase = 0
+    def __init__(self, scoreThreshold=5, **kwargs):
+        super(OvercookedTutorial, self).__init__(**kwargs)
+        self.scoreThreshold = scoreThreshold
 
-    @property
-    def reset_timeout(self):
-        return 1
+    def _curr_game_over(self):
+        return self.score >= self.scoreThreshold
 
-    def needs_reset(self):
-        if self.curr_phase == 0:
-            return self.score > 0
-        elif self.curr_phase == 1:
-            return self.score > 0
-        elif self.curr_phase == 2:
-            return self.phase_two_finished
+# class OvercookedTutorial(OvercookedGame):
+#     """
+#     Wrapper on OvercookedGame that includes additional data for tutorial mechanics, most notably the introduction of tutorial "phases"
 
-        return False
+#     Instance Variables:
+#         - curr_phase (int): Indicates what tutorial phase we are currently on
+#         - phase_two_score (float): The exact sparse reward the user must obtain to advance past phase 2
+#     """
+#     def __init__(self,
+#                  layouts=["tutorial_0"],
+#                  mdp_params={},
+#                  playerZero='human',
+#                  playerOne='AI',
+#                  phaseTwoScore=15,
+#                  **kwargs):
+#         super(OvercookedTutorial, self).__init__(layouts=layouts,
+#                                                  mdp_params=mdp_params,
+#                                                  playerZero=playerZero,
+#                                                  playerOne=playerOne,
+#                                                  showPotential=False,
+#                                                  **kwargs)
+#         self.phase_two_score = phaseTwoScore
+#         self.phase_two_finished = False
+#         self.max_time = 0
+#         self.max_players = 2
+#         self.ticks_per_ai_action = TICKS_PER_AI_ACTION
+#         self.curr_phase = 0
 
-    def is_finished(self):
-        return not self.layouts and self.score >= float('inf')
+#     @property
+#     def reset_timeout(self):
+#         return 1
 
-    def reset(self):
-        super(OvercookedTutorial, self).reset()
-        self.curr_phase += 1
+#     def needs_reset(self):
+#         if self.curr_phase == 0:
+#             return self.score > 0
+#         elif self.curr_phase == 1:
+#             return self.score > 0
+#         elif self.curr_phase == 2:
+#             return self.phase_two_finished
 
-    def get_policy(self, *args, **kwargs):
-        return TutorialAI()
+#         return False
 
-    def apply_actions(self):
-        """
-        Apply regular MDP logic with retroactive score adjustment tutorial purposes
-        """
-        _, _, info = super(OvercookedTutorial, self).apply_actions()
+#     def is_finished(self):
+#         return not self.layouts and self.score >= float('inf')
 
-        human_reward, ai_reward = info['sparse_reward_by_agent']
+#     def reset(self):
+#         super(OvercookedTutorial, self).reset()
+#         self.curr_phase += 1
 
-        # We only want to keep track of the human's score in the tutorial
-        self.score -= ai_reward
+#     def get_policy(self, *args, **kwargs):
+#         return TutorialAI()
 
-        # Phase two requires a specific reward to complete
+#     def apply_actions(self):
+#         """
+#         Apply regular MDP logic with retroactive score adjustment tutorial purposes
+#         """
+#         _, _, info = super(OvercookedTutorial, self).apply_actions()
 
-        if self.curr_phase == 2:
-            self.score = 0
+#         human_reward, ai_reward = info['sparse_reward_by_agent']
 
-            if human_reward == self.phase_two_score:
-                self.phase_two_finished = True
+#         # We only want to keep track of the human's score in the tutorial
+#         self.score -= ai_reward
+
+#         # Phase two requires a specific reward to complete
+
+#         if self.curr_phase == 2:
+#             self.score = 0
+
+#             if human_reward == self.phase_two_score:
+#                 self.phase_two_finished = True
 
 
 class DummyOvercookedGame(OvercookedGame):

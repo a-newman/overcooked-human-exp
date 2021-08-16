@@ -8,6 +8,7 @@ class GameSubtask {
     layout,
     partnerNum,
     totalPartners,
+    gameType,
   }) {
     this.title = title;
     this.p1Name = p1Name;
@@ -17,6 +18,7 @@ class GameSubtask {
     this.layout = layout;
     this.partnerNum = partnerNum;
     this.totalPartners = totalPartners;
+    this.gameType = gameType;
 
     // socket event handlers
     window.intervalID = -1;
@@ -82,7 +84,7 @@ class GameSubtask {
     console.log("params", params);
     const data = {
       params: params,
-      game_name: "overcooked_recorder",
+      game_name: this.gameType,
       create_if_not_found: false,
     };
     this.socket.emit("create", data);
