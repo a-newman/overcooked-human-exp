@@ -742,14 +742,14 @@ class OvercookedTutorial(OvercookedRecorder):
     Wrapper on OvercookedRecorder that incorporates tutorial mechanics
 
     Instance Variables:
-        - trajectory (list(dict)): list of state-action pairs in current trajectory
-        - trial_id (string): Unique identifier for each game
+        - scoreThreshold: how many soups need to be delivered to pass tutorial
 
     Methods:
-        get_data: Returns the accumulated trajectory data and clears the self.trajectory instance variable
+        - _curr_game_over: self-use helper function that supersedes one from Overcooked class. 
+          Checks if game is over when the score is reached.
 
     """
-    def __init__(self, scoreThreshold=0, **kwargs):
+    def __init__(self, scoreThreshold=5, **kwargs):
         super(OvercookedTutorial, self).__init__(**kwargs)
         self.scoreThreshold = scoreThreshold
 
@@ -782,6 +782,7 @@ class DummyAI():
 
     def reset(self):
         pass
+
 
 
 class DummyComputeAI(DummyAI):

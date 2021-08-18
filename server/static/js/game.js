@@ -199,10 +199,19 @@ class GameSubtask {
     $("#next").show();
     $("#next").attr("disabled", false);
 
-    // Save the game data globally so that it can be referenced
-    // after game end
-    // TODO: does this still work?
     gameData = data;
+    const params = {
+      playerZero: this.p1Name,
+      playerOne: this.p2Name,
+      layouts: [this.layout],
+      gameTime: this.gameLength,
+      gameTitle: this.title,
+      gamePartnerNum: this.partnerNum,
+      gameTotalPartners: this.totalPartners,
+      gameType: this.gameType,
+    };
+
+    gameData.params = params;
   }
 
   endLobby() {
