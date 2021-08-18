@@ -9,6 +9,7 @@ class GameSubtask {
     partnerNum,
     totalPartners,
     gameType,
+    tutorialThreshold,
   }) {
     this.title = title;
     this.p1Name = p1Name;
@@ -19,6 +20,7 @@ class GameSubtask {
     this.partnerNum = partnerNum;
     this.totalPartners = totalPartners;
     this.gameType = gameType;
+    this.tutorialThreshold = tutorialThreshold;
 
     // socket event handlers
     window.intervalID = -1;
@@ -75,12 +77,17 @@ class GameSubtask {
   }
 
   start() {
-    const params = {
+    var params = {
       playerZero: this.p1Name,
       playerOne: this.p2Name,
       layouts: [this.layout],
       gameTime: this.gameLength,
     };
+
+    if(this.gameType === 'tutorial') {
+      params.scoreThreshold = this.tutorialThreshold;
+    }
+
     console.log("params", params);
     const data = {
       params: params,

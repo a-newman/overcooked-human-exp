@@ -56,6 +56,7 @@ class TaskController {
       layout: "simple_single_agent",
       socket: this.socket,
       gameType: "tutorial",
+      tutorialThreshold: config.nSoupsPassTutorial,
     });
     taskProgression.push(new TutorialSubtask(tutorialGame));
 
