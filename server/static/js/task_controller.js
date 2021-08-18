@@ -26,6 +26,7 @@ class TaskController {
           // initialize data
           this.data = new Array(this.taskProgression.length).fill({});
           config.path = this.configFile;
+          config.gameOrder = this.allGames;
           this.data.push(config);
           this.isLoaded = true;
           this.reset();
@@ -46,6 +47,7 @@ class TaskController {
     taskProgression.push(new OverviewSubtask(config.games.length));
     taskProgression.push(new DemoQuestionsSubtask());
     taskProgression.push(new InstructionsSubtask());
+
     const tutorialGame = new GameSubtask({
       title: "Tutorial",
       p1Name: "human",
@@ -56,7 +58,13 @@ class TaskController {
       gameType: "tutorial",
     });
     taskProgression.push(new TutorialSubtask(tutorialGame));
-    config.games.forEach((playerNames, iPartner) => {
+
+    console.log('here')
+    this.allGames = config.games.slice();
+    console.log(this.allGames)
+    this.shuffle(this.allGames);
+    console.log(this.allGames)
+    this.allGames.forEach((playerNames, iPartner) => {
       // push some game subtasks
       for (var iGame = 0; iGame < config.nGamesPerPartner; iGame++) {
         var title = `Partner ${iPartner + 1}, Game ${iGame + 1}`;
@@ -199,6 +207,13 @@ class TaskController {
     $("#submit-form").attr("method", "POST");
     $("#submit-form").submit();
 
+  }
+
+  shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
   }
 
 }

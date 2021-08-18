@@ -749,7 +749,7 @@ class OvercookedTutorial(OvercookedRecorder):
         get_data: Returns the accumulated trajectory data and clears the self.trajectory instance variable
 
     """
-    def __init__(self, scoreThreshold=5, **kwargs):
+    def __init__(self, scoreThreshold=0, **kwargs):
         super(OvercookedTutorial, self).__init__(**kwargs)
         self.scoreThreshold = scoreThreshold
 
