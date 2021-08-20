@@ -29,6 +29,7 @@ def load_policy(model_id, player_idx, agent_dir):
     train_params = Dict2Obj(json.load(open(args_path, "r")))
     train_params.weight_decay = 0  # for backwards compatibility
     train_params.device = 'cpu'
+    train_params.use_ib = train_params.get('use_ib', True)
     num_agents = 2
 
     # Get the policy
