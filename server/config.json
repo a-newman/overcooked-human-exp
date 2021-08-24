@@ -16,7 +16,7 @@
     "REWARD_PER_SOUP": 1,
     "data_storage": {
         "storage_method": "save_to_file",
-        "save_directory": "./data"
+        "save_directory": "./data/server"
     },
     "psiturk": {
         "experimentParams": {
