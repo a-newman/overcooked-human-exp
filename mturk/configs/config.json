@@ -8,7 +8,7 @@
         "keywords": "overcooked, game, survey",
         "duration": 1800,
         "lifetime": 86400,
-        "taskUrl": "https://human-agent-collaboration.su.domains/experiment?config=debug.json",
+        "taskUrl": "https://human-agent-collaboration.su.domains/experiment",
         "variants": [],
         "externalSubmit": false
     }
