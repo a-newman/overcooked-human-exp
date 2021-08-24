@@ -723,12 +723,12 @@ def play_game(game, fps=30):
         socketio.sleep(1 / fps)
 
     with game.lock:
-        data = game.get_data()
+        data, trial_id = game.get_data()
         socketio.emit('end_game', {
             "status": status,
-            "data": data
-        },
-                      room=game.id)
+            "data": data,
+            "trial_id": trial_id,
+        }, room=game.id)
 
         if status != Game.Status.INACTIVE:
             game.deactivate()

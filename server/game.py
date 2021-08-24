@@ -734,7 +734,8 @@ class OvercookedRecorder(OvercookedGame):
             print("DataSaveError:", dse)
             pass
 
-        return data
+        return data, self.trial_id
+
 
 
 class OvercookedTutorial(OvercookedRecorder):
