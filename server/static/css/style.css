@@ -320,3 +320,12 @@ label {
   width: 19%;
   padding: 10px;
 }
+
+.layout-img-container {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.layout-img {
+  width:33%;
+}
