@@ -10,6 +10,7 @@ from models.utils import get_policy
 from tianshou.data import Batch, Dict2Obj
 from tianshou.env.overcooked.action import Action
 from tianshou.policy import MetaRLPolicy, MultiAgentPolicy, ProdMetaRLPolicy
+from utils import load_train_args_from_file
 
 
 def load_policy(model_id, player_idx, agent_dir):
@@ -26,9 +27,7 @@ def load_policy(model_id, player_idx, agent_dir):
     args_path = os.path.join(logdir, "..", "args.json")
 
     # Get training params
-    train_params = Dict2Obj(json.load(open(args_path, "r")))
-    train_params.weight_decay = 0  # for backwards compatibility
-    train_params.use_ib = train_params.get('use_ib', True)
+    train_params = load_train_args_from_file(args_path)
     # avoids trying to load a bc ckpt with sac_v_bc models
     train_params.do_not_load_bc_model = True
     train_params.device = 'cpu'
