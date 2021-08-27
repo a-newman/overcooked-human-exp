@@ -6,7 +6,8 @@
         "coordination_ring",
         "forced_coordination",
         "counter_circuit",
-        "simple_single_agent"
+        "simple_single_agent",
+        "coordination_ring_flipped"
     ],
     "MAX_GAMES": 10,
     "MAX_GAME_LENGTH": 1000,

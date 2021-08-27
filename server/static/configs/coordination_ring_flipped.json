@@ -1,0 +1,25 @@
+{
+    "games": [
+        [
+            "human",
+            "sac_self_play_coordination_ring_0"
+        ],
+        [
+            "human",
+            "nct_coordination_ring"
+        ],
+        [
+            "human",
+            "action_cml_v_sac_none_no_ib"
+        ],
+        [
+            "human",
+            "sac_v_bc_states_coordination_ring_0"
+        ]
+    ],
+    "nGamesPerPartner": 1,
+    "nSecondsPerGame": 60,
+    "nSecondsPerTutorial": 0,
+    "nSoupsPassTutorial": 5,
+    "layout": "coordination_ring_flipped"
+}
