@@ -25,8 +25,17 @@ class TaskController {
           console.log("taskProgression", this.taskProgression);
           // initialize data
           this.data = new Array(this.taskProgression.length).fill({});
+
+          const browserInfo = {
+            navigatorPlatform: navigator.platform,
+            navigatorAppVersion: navigator.appVersion,
+            navigatorUserAgent: navigator.userAgent, 
+          }
+
           config.path = this.configFile;
           config.gameOrder = this.allGames;
+          config.browserInfo = browserInfo;
+
           this.data.push(config);
           this.isLoaded = true;
           this.reset();
