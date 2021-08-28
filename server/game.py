@@ -700,6 +700,12 @@ class OvercookedRecorder(OvercookedGame):
 
         # Log data to send to psiturk client
         curr_reward = info['curr_game_reward']
+        policy = list(self.npc_policies.values())[0]
+        try:
+            z = policy.policy.z
+            z = z.squeeze().tolist()
+        except AttributeError:
+            z = None
         transition = {
             "state": prev_state.to_dict(),
             "joint_action": joint_action,
@@ -715,7 +721,8 @@ class OvercookedRecorder(OvercookedGame):
             "player_1_id": self.players[1],
             "player_0_is_human": self.players[0] in self.human_players,
             "player_1_is_human": self.players[1] in self.human_players,
-            "info": info
+            "info": info,
+            "z_value": z
         }
 
         self.trajectory.append(transition)
@@ -737,7 +744,6 @@ class OvercookedRecorder(OvercookedGame):
         return data, self.trial_id
 
 
-
 class OvercookedTutorial(OvercookedRecorder):
     """
     Wrapper on OvercookedRecorder that incorporates tutorial mechanics
@@ -746,7 +752,7 @@ class OvercookedTutorial(OvercookedRecorder):
         - scoreThreshold: how many soups need to be delivered to pass tutorial
 
     Methods:
-        - _curr_game_over: self-use helper function that supersedes one from Overcooked class. 
+        - _curr_game_over: self-use helper function that supersedes one from Overcooked class.
           Checks if game is over when the score is reached.
 
     """
@@ -783,7 +789,6 @@ class DummyAI():
 
     def reset(self):
         pass
-
 
 
 class DummyComputeAI(DummyAI):
