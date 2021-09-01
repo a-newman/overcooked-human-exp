@@ -22,6 +22,7 @@ class GameSubtask {
     this.gameType = gameType;
     this.tutorialThreshold = tutorialThreshold;
 
+    this.tutorialCounter = 1; //start with one try
     // socket event handlers
     window.intervalID = -1;
     window.spectating = true;
@@ -29,7 +30,7 @@ class GameSubtask {
 
   load() {
     // set the game title
-    $(".game-title").text(this.title);
+    // $(".game-title").text(this.title);
 
     // make the correct params visible in the UI
     $(".player-1-name").text(this.p1Name);
@@ -189,12 +190,30 @@ class GameSubtask {
     drawState(data["state"]);
   }
 
+  calculateRewardHelper(trajectory) {
+    var total_reward = 0;
+    for (const val of trajectory) {
+      total_reward += val.reward;      
+    }
+    return(total_reward)
+  }
+
   endGame(data) {
     // Hide game data and display game-over html
     graphics_end();
     if (!window.spectating) {
       disable_key_listener();
     }
+    
+    const game_reward = this.calculateRewardHelper(data.data.trajectory);
+
+    if(game_reward < this.tutorialThreshold) {
+      this.load();
+      $(".game-info").hide();
+      this.tutorialCounter += 1;
+      return;
+    }
+
     $("#game-title").hide();
     $("#game-over").show();
 
@@ -208,7 +227,7 @@ class GameSubtask {
 
     gameData = {};
 
-    const params = {
+    var params = {
       playerZero: this.p1Name,
       playerOne: this.p2Name,
       layouts: [this.layout],
@@ -218,6 +237,10 @@ class GameSubtask {
       gameTotalPartners: this.totalPartners,
       gamePartnerNum: this.partnerNum,
     };
+
+    if(this.gameType === 'tutorial') {
+      params.tutorialCounter = this.tutorialCounter;
+    }
 
     gameData.trial_id = data.trial_id;
     gameData.params = params;

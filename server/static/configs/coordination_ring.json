@@ -19,7 +19,7 @@
     ],
     "nGamesPerPartner": 1,
     "nSecondsPerGame": 60,
-    "nSecondsPerTutorial": 0,
-    "nSoupsPassTutorial": 5,
+    "nSecondsPerTutorial": 30,
+    "nSoupsPassTutorial": 3,
     "layout": "coordination_ring"
 }

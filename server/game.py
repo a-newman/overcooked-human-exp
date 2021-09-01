@@ -744,6 +744,9 @@ class OvercookedRecorder(OvercookedGame):
         return data, self.trial_id
 
 
+
+
+
 class OvercookedTutorial(OvercookedRecorder):
     """
     Wrapper on OvercookedRecorder that incorporates tutorial mechanics
@@ -761,7 +764,17 @@ class OvercookedTutorial(OvercookedRecorder):
         self.scoreThreshold = scoreThreshold
 
     def _curr_game_over(self):
-        return self.score >= self.scoreThreshold
+        return time() - self.start_time >= self.max_time or self.score >= self.scoreThreshold
+
+    def _get_reward_helper(trajectory):
+        total_reward = 0
+    
+        for timestep in trajectory:
+            total_reward += timestep['reward']
+
+        return total_reward
+
+
 
 
 class DummyOvercookedGame(OvercookedGame):
