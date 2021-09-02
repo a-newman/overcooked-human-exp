@@ -10,7 +10,7 @@ from models.utils import get_policy
 from tianshou.data import Batch, Dict2Obj
 from tianshou.env.overcooked.action import Action
 from tianshou.policy import MetaRLPolicy, MultiAgentPolicy, ProdMetaRLPolicy
-from utils import load_train_args_from_file
+from utils.utils import load_train_args_from_file
 
 
 def load_policy(model_id, player_idx, agent_dir):
