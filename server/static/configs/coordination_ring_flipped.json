@@ -11,6 +11,10 @@
         [
             "human",
             "nct_sp_pool_coordination_ring"
+        ],
+        [
+            "human",
+            "nct_mixed_pool_coordination_ring"
         ]
     ],
     "nGamesPerPartner": 1,

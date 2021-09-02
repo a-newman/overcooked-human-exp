@@ -12,6 +12,10 @@
             "human",
             "nct_sp_pool_simple"
         ],
+        [
+            "human",
+            "nct_mixed_pool_simple"
+        ],
     ],
     "nGamesPerPartner": 1,
     "nSecondsPerGame": 60,
