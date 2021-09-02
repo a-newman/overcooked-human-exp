@@ -2,20 +2,20 @@
     "games": [
         [
             "human",
-            "nct_bc_pool_coordination_ring"
+            "nct_bc_pool_simple"
         ],
         [
             "human",
-            "nct_domain_pool_coordination_ring"
+            "nct_domain_pool_simple"
         ],
         [
             "human",
-            "nct_sp_pool_coordination_ring"
-        ]
+            "nct_sp_pool_simple"
+        ],
     ],
     "nGamesPerPartner": 1,
     "nSecondsPerGame": 60,
     "nSecondsPerTutorial": 35,
     "nSoupsPassTutorial": 3,
-    "layout": "coordination_ring_flipped"
+    "layout": "simple_flipped"
 }

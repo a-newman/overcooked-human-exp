@@ -2,24 +2,20 @@
     "games": [
         [
             "human",
-            "sac_self_play_simple_0"
+            "nct_bc_pool_simple"
         ],
         [
             "human",
-            "nct_simple"
+            "nct_domain_pool_simple"
         ],
         [
             "human",
-            "action_cml_simple"
+            "nct_sp_pool_simple"
         ],
-        [
-            "human",
-            "sac_v_bc_states_simple_0"
-        ]
     ],
     "nGamesPerPartner": 1,
     "nSecondsPerGame": 60,
-    "nSecondsPerTutorial": 0,
-    "nSoupsPassTutorial": 5,
+    "nSecondsPerTutorial": 35,
+    "nSoupsPassTutorial": 3,
     "layout": "simple"
 }
