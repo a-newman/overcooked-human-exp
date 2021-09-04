@@ -1,0 +1,38 @@
+{
+    "games": [
+        [
+            "human",
+            "nct_v_bc_states_simple_902_best_collab_bc_pool"
+        ],
+        [
+            "human",
+            "nct_v_sac_simple_900_best_collab_mixed_pool"
+        ],
+        [
+            "human",
+            "nct_v_sac_simple_901_best_collab_domain_pool"
+        ],
+        [
+            "human",
+            "nct_v_sac_simple_902_best_collab_sp_pool"
+        ],
+        [
+            "human",
+            "sac_self_play_simple_3"
+        ],
+        [
+            "human",
+            "sac_v_bc_states_simple_4"
+        ],
+        [
+            "human",
+            "sac_v_collaborator_3_simple"
+        ]
+
+    ],
+    "nGamesPerPartner": 1,
+    "nSecondsPerGame": 60,
+    "nSecondsPerTutorial": 35,
+    "nSoupsPassTutorial": 3,
+    "layout": "simple_flipped"
+}
