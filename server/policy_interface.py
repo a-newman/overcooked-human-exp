@@ -28,8 +28,8 @@ def load_policy(model_id, player_idx, agent_dir):
 
     # Get training params
     train_params = load_train_args_from_file(args_path)
-    # avoids trying to load a bc ckpt with sac_v_bc models
-    train_params.do_not_load_bc_model = True
+    # avoids trying to load a static partner ckpt that we won't use
+    train_params.do_not_load_partner_model = True
     train_params.device = 'cpu'
     num_agents = 2
 
