@@ -1,0 +1,38 @@
+{
+    "games": [
+        [
+            "human",
+            "nct_v_bc_states_coordination_ring_902_best_collab_bc_pool"
+        ],
+        [
+            "human",
+            "nct_v_sac_coordination_ring_900_best_collab_sp_pool"
+        ],
+        [
+            "human",
+            "sac_self_play_coordination_ring_1"
+        ],
+        [
+            "human",
+            "sac_self_play_coordination_ring_2"
+        ],
+        [
+            "human",
+            "sac_self_play_coordination_ring_3"
+        ],
+        [
+            "human",
+            "sac_v_bc_states_coordination_ring_0"
+        ],
+        [
+            "human",
+            "sac_v_bc_states_half_coordination_ring_0"
+        ]
+
+    ],
+    "nGamesPerPartner": 1,
+    "nSecondsPerGame": 60,
+    "nSecondsPerTutorial": 40,
+    "nSoupsPassTutorial": 3,
+    "layout": "coordination_ring_flipped"
+}
